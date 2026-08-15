@@ -1,28 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
 
-import lara from './assets/lara.jpg';
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import Constants from "expo-constants";
+
+import lara from "./assets/lara.jpg";
+import anadir from "./assets/anadirIcon.png";
+import { Main } from "./components/Main";
+
+function showAlert(mensaje) {
+  alert(mensaje);
+}
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <StatusBar style="light"/>
-      <Image source={lara} style={{ 
-        width: 150,
-        height: 150,
-        resizeMode: 'contain' 
-        }}/>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        <Main />
+      </View>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
-    color: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#181818",
+    alignItems: "stretch",
+    justifyContent: "flex-start",
+    paddingTop: 0,
+    padding: 0,
   },
 });

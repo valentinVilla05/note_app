@@ -1,0 +1,24 @@
+* ActivityIndicator (no aparecer de repente)
+* Mirar como manejar el almacenamiento
+* Posicionar bien el boton de "Nueva nota"
+* Panel Lateral
+* Mostrar todas las notas 
+
+* Barra de herramientas en editor de texto
+
+
+Manejo de datos:
+ * Expo SecureStore -> Gestor de contraseñas
+ * Expo Filesystem -> Gestor de imagenes, audios u archivos
+ * Async Storage -> Gestor de las notas
+
+
+
+* Animaciones
+* Personalizacion
+
+Futuro: 
+ * Opcion de hacer notas en la nube vinculadas con el pc (Supabase?)
+ * Poder conectar a google
+
+
