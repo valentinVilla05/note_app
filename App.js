@@ -18,7 +18,7 @@ export default function App() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="auto" />
-        <Main />
+        <Main/>
       </View>
     </SafeAreaProvider>
   );
@@ -26,10 +26,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100%',
     backgroundColor: "#181818",
-    alignItems: "stretch",
-    justifyContent: "flex-start",
+    justifyContent: 'space-between',
+    alignContent: 'space-between',
     paddingTop: 0,
     padding: 0,
   },
