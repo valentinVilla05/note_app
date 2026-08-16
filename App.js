@@ -5,7 +5,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import Constants from "expo-constants";
 
-import lara from "./assets/lara.jpg";
 import anadir from "./assets/anadirIcon.png";
 import { Main } from "./components/Main";
 
