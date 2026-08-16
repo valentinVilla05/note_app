@@ -3,6 +3,8 @@ import { FlatList, Animated, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef } from "react";
 import { Nota } from "./NotaMenu";
+import { Anadir } from "./Icons";
+import { Link } from "expo-router";
 
 const listaNotas = [
   {
@@ -53,7 +55,7 @@ export function Notas({ nota, index }) {
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <Ionicons name="add" size={30} color="#717171" />
+          <Anadir />
           <Text style={{ color: "#717171" }}>
             Aún no tienes notas escritas.
           </Text>

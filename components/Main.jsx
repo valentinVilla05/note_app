@@ -18,17 +18,14 @@ import { Notas } from "./Notas";
 import { Link } from "expo-router";
 import Constants from "expo-constants";
 import anadir from "../assets/anadirIcon.png";
-
-function showAlert(mensaje) {
-  alert(mensaje);
-}
+import { Escribir } from "./Icons";
 
 export function Main() {
   const insets = useSafeAreaInsets();
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="auto"/>
+      <StatusBar style="auto" />
       <View
         style={{
           flex: 1,
@@ -45,21 +42,22 @@ export function Main() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Escribir nota"
+              className="bg-[#e17f29] active:bg-[#cf701e] active:opacity-50"
             >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Image
-                  source={anadir}
+              {({ pressed }) => (
+                <View
                   style={{
-                    width: 25,
-                    height: 25,
-                    resizeMode: "contain",
-                    marginRight: 15,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    opacity: pressed ? 0.5 : 1,
                   }}
-                />
-                <Text style={{ color: "#fff", fontSize: 20 }}>
-                  Escribir nota
-                </Text>
-              </View>
+                >
+                  <Escribir className="me-5" />
+                  <Text style={{ color: "#fff", fontSize: 20 }}>
+                    Escribir nota
+                  </Text>
+                </View>
+              )}
             </Pressable>
           </Link>
         </View>
