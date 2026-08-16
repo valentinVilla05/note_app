@@ -67,6 +67,7 @@ export function Notas({ nota, index }) {
           keyExtractor={(nota) => String(nota.id)}
           renderItem={({ item }) => (
             <Nota
+              id={item.id}
               title={item.title}
               text={
                 item.text.length > 100

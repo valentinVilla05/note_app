@@ -13,58 +13,56 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { Header } from "./Header";
 import { Notas } from "./Notas";
 import { Link } from "expo-router";
 import Constants from "expo-constants";
 import anadir from "../assets/anadirIcon.png";
 import { Anadir, Escribir } from "./Icons";
+import { Screen } from "./Screen";
 
 export function Main() {
   const insets = useSafeAreaInsets();
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="auto" />
-      <View
-        style={{
-          flex: 1,
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-        }}
-      >
-        <Header />
-        <View style={{ flex: 1 }}>
-          <Notas />
+      <Screen>
+        <StatusBar style="auto" />
+        <View
+          style={{
+            flex: 1,
+            paddingBottom: insets.bottom,
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <Notas />
+          </View>
+          <View style={styles.botonAnadir}>
+            <Link asChild href="/nuevaNota">
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Escribir nota"
+                className="bg-[#e17f29] active:bg-[#cf701e] active:opacity-50"
+              >
+                {({ pressed }) => (
+                  <View
+                    className="justify-center items-center"
+                    style={{
+                      opacity: pressed ? 0.5 : 1,
+                    }}
+                  >
+                    <Anadir className="" color="white" />
+                  </View>
+                )}
+              </Pressable>
+            </Link>
+          </View>
         </View>
-        <View style={styles.botonAnadir}>
-          <Link asChild href="/nuevaNota">
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Escribir nota"
-              className="bg-[#e17f29] active:bg-[#cf701e] active:opacity-50"
-            >
-              {({ pressed }) => (
-                <View
-                  className="justify-center items-center"
-                  style={{
-                    opacity: pressed ? 0.5 : 1,
-                  }}
-                >
-                  <Anadir className="" color="white" />
-                </View>
-              )}
-            </Pressable>
-          </Link>
-        </View>
-      </View>
+      </Screen>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  body: {},
-
   botonAnadir: {
     backgroundColor: "#e17f29",
     alignItems: "center",
