@@ -25,15 +25,20 @@ export const NuevaNota = (props) => {
           </Pressable>
           <TextInput
             className="text-gray-300 ms-3 me-2 text-xl underline"
-            value={
-              tamanoFuente > 0 || String(tamanoFuente) === ""
-                ? String(tamanoFuente)
-                : 1
-            }
+            value={String(tamanoFuente)}
             onChangeText={(tamano) => {
-              const nuevo = parseInt(tamano, 10);
-              if (!isNaN(nuevo)) setTamanoFuente(nuevo);
-              else if (tamano == "" || tamano == 0) setTamanoFuente(1);
+              if (tamano === "") {
+                setTamanoFuente("");
+              } else {
+                const nuevo = parseInt(tamano, 10);
+                if (!isNaN(nuevo)) setTamanoFuente(nuevo);
+              }
+            }}
+            onBlur={() => {
+
+              if (tamanoFuente === "" || tamanoFuente < 1) {
+                setTamanoFuente(1);
+              }
             }}
             keyboardType="numeric"
           />
