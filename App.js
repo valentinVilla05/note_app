@@ -1,6 +1,6 @@
+import "./global.css";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import Constants from "expo-constants";
@@ -17,7 +17,7 @@ export default function App() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="auto" />
-        <Main/>
+        <Main />
       </View>
     </SafeAreaProvider>
   );
@@ -25,10 +25,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    height: "100%",
     backgroundColor: "#181818",
-    justifyContent: 'space-between',
-    alignContent: 'space-between',
+    justifyContent: "space-between",
+    alignContent: "space-between",
     paddingTop: 0,
     padding: 0,
   },

@@ -1,34 +1,17 @@
 import { View, Text, Pressable } from "react-native";
-import { StyleSheet } from "react-native";
 
 export const Nota = (props) => {
   return (
-    <Pressable onPress={() => {alert("Soy una nota")}} style={styles.celda}>
+    <Pressable
+      onPress={() => alert("Soy una nota")}
+      className="w-[48%] self-start bg-[#4a4a4a] m-[7px] rounded-[10px] min-w-[150px]"
+    >
       <View>
-        <Text
-          style={{
-            textAlign: "left",
-            fontSize: 20,
-            fontStyle: "italic",
-            color: "white",
-            backgroundColor: "#373737",
-            borderRadius: 10,
-            borderBottomRightRadius: 0,
-            borderBottomLeftRadius: 0,
-            padding: 5,
-          }}
-        >
+        <Text className="text-left text-xl italic text-white bg-[#373737] rounded-t-[10px] p-[5px]">
           {props.title}
         </Text>
         <View>
-          <Text
-            style={{
-              color: "white",
-              padding: 5,
-              fontWeight: 300,
-              fontSize: 14,
-            }}
-          >
+          <Text className="text-white p-[5px] font-light text-sm">
             {props.text}
           </Text>
         </View>
@@ -36,14 +19,3 @@ export const Nota = (props) => {
     </Pressable>
   );
 };
-
-const styles = StyleSheet.create({
-  celda: {
-    width: '48%',
-    alignSelf: 'flex-start',
-    backgroundColor: "#4a4a4a",
-    margin: 7,
-    borderRadius: 10,
-    minWidth: 150,
-  },
-});
