@@ -18,7 +18,7 @@ import { Notas } from "./Notas";
 import { Link } from "expo-router";
 import Constants from "expo-constants";
 import anadir from "../assets/anadirIcon.png";
-import { Escribir } from "./Icons";
+import { Anadir, Escribir } from "./Icons";
 
 export function Main() {
   const insets = useSafeAreaInsets();
@@ -46,16 +46,12 @@ export function Main() {
             >
               {({ pressed }) => (
                 <View
+                  className="justify-center items-center"
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
                     opacity: pressed ? 0.5 : 1,
                   }}
                 >
-                  <Escribir className="me-5" />
-                  <Text style={{ color: "#fff", fontSize: 20 }}>
-                    Escribir nota
-                  </Text>
+                  <Anadir className="" color="white" />
                 </View>
               )}
             </Pressable>
@@ -73,9 +69,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#e17f29",
     alignItems: "center",
     justifyContent: "center",
-    width: 200,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     alignSelf: "flex-end",
     marginRight: 30,
     position: "absolute",

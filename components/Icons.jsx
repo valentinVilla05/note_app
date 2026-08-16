@@ -6,7 +6,7 @@ export const Cancelar = (props) => {
 }
 
 export const Anadir = (props) => {
-    return <Ionicons name="add" size={30} color="#717171" />;
+    return <Ionicons name="add" size={30} color="#717171" {...props} />;
 }
 
 export const Escribir = (props) => {
