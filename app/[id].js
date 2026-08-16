@@ -2,9 +2,10 @@ import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { Screen } from "../components/Screen";
 import { Atras } from "../components/Icons";
+import { NuevaNota } from "../components/NuevaNota";
 
 export default function NotaAmpliada() {
-  const { id } = useLocalSearchParams();
+  const { id, title, text } = useLocalSearchParams();
 
   return (
     <Screen>
@@ -18,21 +19,10 @@ export default function NotaAmpliada() {
               <Atras />
             </Pressable>
           ),
-          headerRight: () => {
-            <Text></Text>
-          }
+          headerRight: () => <Text />,
         }}
       />
-
-      <View
-        className="flex-1 justify-center items-center"
-        style={{ backgroundColor: "#181818" }}
-      >
-        <Link href="/">
-          <Text>Volver atras</Text>
-        </Link>
-        <Text className="text-white font-bold">Texto de la nota</Text>
-      </View>
+        <NuevaNota id={id} title={title} text={text}/>
     </Screen>
   );
 }

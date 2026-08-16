@@ -2,7 +2,7 @@
 * Mirar como manejar el almacenamiento
 * Posicionar bien el boton de "Nueva nota"
 * Panel Lateral
-* Mostrar todas las notas 
+* Menus desplegables
 
 * Barra de herramientas en editor de texto
 
@@ -23,6 +23,8 @@ Futuro:
 
 
 
+
+--------- Instalacion -------------
 
  Opción 1: Compilar e instalar la versión Release (Recomendada)
 

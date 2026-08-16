@@ -6,7 +6,7 @@ export const Cancelar = (props) => {
 };
 
 export const Anadir = (props) => {
-  return <Ionicons name="add" size={30} color="#717171" {...props} />;
+  return <Ionicons name="add" size={30} color={"#717171"} {...props} />;
 };
 
 export const Escribir = (props) => {
@@ -24,5 +24,21 @@ export const Menu = (props) => {
 };
 
 export const Atras = (props) => {
-    return <Ionicons name="chevron-back" size={25} color={"white"} {...props} />
-}
+  return <Ionicons name="chevron-back" size={25} color={"white"} {...props} />;
+};
+
+export const Adjuntar = (props) => {
+  return <Ionicons name="attach" size={25} color={"white"} {...props} />;
+};
+
+export const Texto = (props) => {
+  return <Ionicons name="text" size={25} color={"white"} {...props} />;
+};
+
+export const ColorFont = (props) => {
+  return <AntDesign name="font-colors" size={24} color="white" {...props} />;
+};
+
+export const Menos = (props) => {
+  return <AntDesign name="minus" size={24} color="white" {...props} />;
+};

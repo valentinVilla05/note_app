@@ -4,8 +4,18 @@ import { Opciones } from "./Icons";
 
 export const Nota = (props) => {
   return (
-    <Link href={`/${String(props.id)}`} asChild>
-      <Pressable className="w-[47%] self-start bg-[#4a4a4a] m-[7px] rounded-[10px] min-w-[150px]">
+    <Link
+      href={{
+        pathname: "/[id]",
+        params: {
+          id: String(props.id),
+          title: props.title,
+          text: props.text,
+        },
+      }}
+      asChild
+    >
+      <Pressable className="w-[47%] self-start bg-[#4a4a4a] m-[7px] rounded-[10px] min-w-[150px]" testID={`nota-${props.id}`}>
         <View>
           <View className="flex-row items-center justify-between bg-[#373737] rounded-t-[10px] p-[5px]">
             <Text className="text-left text-xl italic text-white flex-1">
