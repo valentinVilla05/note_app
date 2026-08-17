@@ -7,7 +7,7 @@ import { Anadir } from "./Icons";
 import { Link } from "expo-router";
 import { listaNotas } from "../data/notas";
 
-export function Notas({ nota, index, listaNotas }) {
+export function Notas({ index, listaNotas, onNotaEliminada }) {
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -45,6 +45,7 @@ export function Notas({ nota, index, listaNotas }) {
                   : item.text
               }
               style={styles.nota}
+              onNotaEliminada={onNotaEliminada}
             />
           )}
         />

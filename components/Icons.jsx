@@ -42,3 +42,7 @@ export const Subrayado = (props) => {
 export const Menos = (props) => {
   return <AntDesign name="minus" size={24} color="white" {...props} />;
 };
+
+export const Papelera = (props) => {
+  return <Ionicons name="trash-bin-outline" size={24} color="white" {...props}/>;
+}

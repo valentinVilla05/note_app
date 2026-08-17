@@ -12,7 +12,7 @@ Manejo de datos:
  * Expo Filesystem -> Gestor de imagenes, audios u archivos
  * Async Storage -> Gestor de las notas
 
-
+* Picker -> Ventana de seleccion
 
 * Animaciones
 * Personalizacion

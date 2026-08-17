@@ -60,6 +60,8 @@ export function Main() {
         id: Date.now().toString(),
         title: "",
         text: "",
+        date: Date.now(),
+        lastUpdate: Date.now()
       };
 
       const nuevasNotas = [...listaNotas, nuevaNota];
@@ -85,7 +87,7 @@ export function Main() {
           }}
         >
           <View style={{ flex: 1 }}>
-            <Notas listaNotas={listaNotas} />
+            <Notas listaNotas={listaNotas} onNotaEliminada={cargarNotas}/>
           </View>
           <View style={styles.botonAnadir}>
             <Pressable

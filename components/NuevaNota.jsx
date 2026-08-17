@@ -66,7 +66,13 @@ export const NuevaNota = (props) => {
           className="flex-row me-3 ms-3 justify-center items-center"
           color={"white"}
         >
-          <Pressable onPress={() => setTamanoFuente((actual) => actual - 1)}>
+          {/* 1. Protección en el botón restar por si el input está vacío */}
+          <Pressable
+            disabled={!tamanoFuente || Number(tamanoFuente) <= 1}
+            onPress={() =>
+              setTamanoFuente((actual) => Math.max(1, Number(actual) - 1))
+            }
+          >
             <Menos />
           </Pressable>
           <TextInput
@@ -87,7 +93,11 @@ export const NuevaNota = (props) => {
             }}
             keyboardType="numeric"
           />
-          <Pressable onPress={() => setTamanoFuente((actual) => actual + 1)}>
+          <Pressable
+            onPress={() =>
+              setTamanoFuente((actual) => (parseInt(actual, 10) || 0) + 1)
+            }
+          >
             <Anadir color="white" />
           </Pressable>
         </Pressable>
@@ -113,7 +123,8 @@ export const NuevaNota = (props) => {
               multiline
               style={{
                 textDecorationLine: subrayado ? "underline" : "none",
-                fontSize: tamanoFuente,
+                /* 2. Protección aquí: si tamanoFuente es 0 o "", usamos un valor seguro (1) para renderizar */
+                fontSize: Number(tamanoFuente) >= 1 ? Number(tamanoFuente) : 1,
               }}
               value={texto}
               onChangeText={actualizarTexto}
