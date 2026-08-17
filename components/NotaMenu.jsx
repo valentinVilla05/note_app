@@ -1,4 +1,11 @@
-import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Modal,
+  Animated,
+} from "react-native";
 import { Link } from "expo-router";
 import {
   FavoritoDesmarcado,
@@ -7,12 +14,33 @@ import {
   Opciones,
   Papelera,
 } from "./Icons";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [posicion, setPosicion] = useState({ top: 0, left: 0 });
+
+  // Animación suave de escala
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.94,
+      useNativeDriver: true,
+      speed: 25,
+      bounciness: 4,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 25,
+      bounciness: 4,
+    }).start();
+  };
 
   const abrirMenu = (event) => {
     event.stopPropagation();
@@ -103,14 +131,19 @@ export const NotaMenu = (props) => {
         asChild
       >
         <Pressable
-          className="w-[47%] self-start bg-[#4a4a4a] m-[7px] rounded-[10px] min-w-[150px]"
-          style={{
-            borderWidth: props.favourite == true ? 1 : 0,
-            borderColor: props.favourite == true ? "#D4AF37" : "transparent",
-          }}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          className="w-[47%] self-start m-[7px]"
           testID={`nota-${props.id}`}
         >
-          <View>
+          <Animated.View
+            className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden"
+            style={{
+              transform: [{ scale: scaleAnim }],
+              borderWidth: props.favourite ? 1 : 0,
+              borderColor: props.favourite ? "#D4AF37" : "transparent",
+            }}
+          >
             <View className="flex-row items-center justify-between bg-[#373737] rounded-t-[10px] p-[5px]">
               <View className="flex-row items-center flex-1">
                 {props.pinned ? (
@@ -132,7 +165,7 @@ export const NotaMenu = (props) => {
                 {props.text}
               </Text>
             </View>
-          </View>
+          </Animated.View>
         </Pressable>
       </Link>
 
