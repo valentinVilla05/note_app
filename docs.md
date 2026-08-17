@@ -209,9 +209,10 @@ const abrirMenu = (event) => {
 };
 ```
 
- * La linea:
-``` jsx
+- La linea:
+
+```jsx
 if (props.onNotaEliminada) props.onNotaEliminada();
 ```
 
-se encarga de hacer la llamada al callback que hay en el `Main.jsx` para volver a obtener todas las notas y actualizar el menú princiapl donde se muestran.
+se encarga de hacer la llamada al callback que hay en el `Main.jsx` para volver a obtener todas las notas y actualizar el menú principal donde se muestran.

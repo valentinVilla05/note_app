@@ -2,7 +2,7 @@ import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { Screen } from "../components/Screen";
 import { Atras } from "../components/Icons";
-import { NuevaNota } from "../components/NuevaNota";
+import { Editor } from "../components/Editor";
 
 export default function NotaAmpliada() {
   const { id, title, text } = useLocalSearchParams();
@@ -22,7 +22,7 @@ export default function NotaAmpliada() {
           headerRight: () => <Text />,
         }}
       />
-        <NuevaNota id={id} title={title} text={text}/>
+        <Editor id={id} title={title} text={text}/>
     </Screen>
   );
 }

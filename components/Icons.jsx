@@ -44,5 +44,21 @@ export const Menos = (props) => {
 };
 
 export const Papelera = (props) => {
-  return <Ionicons name="trash-bin-outline" size={24} color="white" {...props}/>;
+  return (
+    <Ionicons name="trash-bin-outline" size={24} color="white" {...props} />
+  );
+};
+
+export const FavoritoDesmarcado = (props) => {
+  return (
+    <Ionicons name="bookmark-outline" size={24} color="black" {...props} />
+  );
+};
+
+export const FavoritoMarcado = (props) => {
+  return <Ionicons name="bookmark" size={24} color="black" {...props} />;
+};
+
+export const Fijar = (props) => {
+  return <AntDesign name="pushpin" size={24} color="black" {...props}/>;
 }

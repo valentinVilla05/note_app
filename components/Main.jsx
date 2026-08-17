@@ -21,6 +21,7 @@ import { Anadir, Escribir } from "./Icons";
 import { Screen } from "./Screen";
 import { useEffect, useState, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { formatearFecha } from "../data/utils";
 
 export function Main() {
   const insets = useSafeAreaInsets();
@@ -48,6 +49,16 @@ export function Main() {
       const jsonValue = await AsyncStorage.getItem("notas");
 
       const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
+
+      // Ponemos las notas fijadas al principio
+      const notasOrdenadas = notasGuardadas.sort((a,b) => {
+        if (a.pinned === b.pinned) {
+          // Si las 2 están fijadas las ordenamos por fecha
+          return (b.lastUpdate || b.date || 0) - (a.lastUpdate || a.date || 0);
+        }
+        return a.pinned ? -1 : 1; // Si "a" está fijada y "b" no, "a" va antes (-1)
+      })
+
       setListaNotas(notasGuardadas);
     } catch (e) {
       alert("Error al cargar las notas");
@@ -55,13 +66,18 @@ export function Main() {
   };
 
   const crearNota = async () => {
+    const fecha = formatearFecha(Date.now());
+
     try {
       const nuevaNota = {
         id: Date.now().toString(),
         title: "",
         text: "",
-        date: Date.now(),
-        lastUpdate: Date.now()
+        favourite: false,
+        pinned: false,
+        date: fecha,
+        lastUpdate: fecha,
+        colorTheme: "black"
       };
 
       const nuevasNotas = [...listaNotas, nuevaNota];
@@ -87,7 +103,12 @@ export function Main() {
           }}
         >
           <View style={{ flex: 1 }}>
-            <Notas listaNotas={listaNotas} onNotaEliminada={cargarNotas}/>
+            <Notas
+              listaNotas={listaNotas}
+              onNotaEliminada={cargarNotas}
+              onNotaMarcada={cargarNotas}
+              onNotaFijada={cargarNotas}
+            />
           </View>
           <View style={styles.botonAnadir}>
             <Pressable

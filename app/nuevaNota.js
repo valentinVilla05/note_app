@@ -1,4 +1,4 @@
-import { NuevaNota } from "../components/NuevaNota"
+import { Editor } from "../components/Editor"
 import { Screen } from "../components/Screen";
 
 export default function nuevaNota() {

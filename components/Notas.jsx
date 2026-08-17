@@ -5,9 +5,14 @@ import { useEffect, useRef } from "react";
 import { NotaMenu } from "./NotaMenu";
 import { Anadir } from "./Icons";
 import { Link } from "expo-router";
-import { listaNotas } from "../data/notas";
 
-export function Notas({ index, listaNotas, onNotaEliminada }) {
+export function Notas({
+  index,
+  listaNotas,
+  onNotaEliminada,
+  onNotaMarcada,
+  onNotaFijada,
+}) {
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -44,8 +49,15 @@ export function Notas({ index, listaNotas, onNotaEliminada }) {
                   ? item.text.slice(0, 100).concat("...")
                   : item.text
               }
+              favourite={item.favourite}
+              pinned={item.pinned}
+              date={item.date}
+              lastUpdate={item.lastUpdate}
+              colorTheme={item.colorTheme}
               style={styles.nota}
               onNotaEliminada={onNotaEliminada}
+              onNotaMarcada={onNotaMarcada}
+              onNotaFijada={onNotaFijada}
             />
           )}
         />

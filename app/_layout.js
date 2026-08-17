@@ -18,7 +18,7 @@ export default function Layout() {
           ),
           headerRight: () => (
             <Text
-              style={{ color: "#c8c8c8", fontSize: 30 }}
+              style={{ color: "#c8c8c8", fontSize: 30, fontStyle: "italic" }}
             >
               Mis notas
             </Text>

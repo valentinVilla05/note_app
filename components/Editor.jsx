@@ -13,26 +13,31 @@ import { useState } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
+import { formatearFecha } from "../data/utils";
 
-export const NuevaNota = (props) => {
+export const Editor = (props) => {
   const [tamanoFuente, setTamanoFuente] = useState(20);
   const [subrayado, setSubrayado] = useState(false);
+  
 
   const params = useLocalSearchParams();
   const id = props.id || params.id;
 
   const [titulo, setTitulo] = useState(props.title || params.title || "");
   const [texto, setTexto] = useState(props.text || params.text || "");
+  const [lastUpdate, setLastUpdate] = useState(props.lastUpdate || "");
 
   const actualizarTitulo = async (nuevoTitulo) => {
+    const fecha = Date.now();
     setTitulo(nuevoTitulo);
+    setLastUpdate(fecha);
 
     const listaNotas = await AsyncStorage.getItem("notas");
     const notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
 
     const listaModificada = notasGuardadas.map((nota) => {
       if (String(nota.id) === String(id)) {
-        return { ...nota, title: nuevoTitulo };
+        return { ...nota, title: nuevoTitulo, lastUpdate: fecha };
       }
       return nota;
     });
@@ -41,14 +46,17 @@ export const NuevaNota = (props) => {
   };
 
   const actualizarTexto = async (nuevoTexto) => {
+    const fecha = Date.now();
+
     setTexto(nuevoTexto);
+    setLastUpdate(fecha);
 
     const listaNotas = await AsyncStorage.getItem("notas");
     const notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
 
     const listaModificada = notasGuardadas.map((nota) => {
       if (String(nota.id) === String(id)) {
-        return { ...nota, text: nuevoTexto };
+        return { ...nota, text: nuevoTexto, lastUpdate: fecha };
       }
       return nota;
     });

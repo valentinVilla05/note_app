@@ -1,6 +1,12 @@
 import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
 import { Link } from "expo-router";
-import { Opciones, Papelera } from "./Icons";
+import {
+  FavoritoDesmarcado,
+  FavoritoMarcado,
+  Fijar,
+  Opciones,
+  Papelera,
+} from "./Icons";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -15,15 +21,14 @@ export const NotaMenu = (props) => {
     const anchoMenu = 140;
 
     setPosicion({
-      top: pageY + 10,
-      left: Math.max(10, pageX - anchoMenu + 15),
+      top: pageY + 17,
+      left: Math.max(10, pageX - anchoMenu - 20),
     });
     setMostrarMenu(true);
   };
 
   const eliminarNota = async (id) => {
     try {
-
       const jsonValue = await AsyncStorage.getItem("notas");
       const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
 
@@ -39,6 +44,46 @@ export const NotaMenu = (props) => {
     }
   };
 
+  const marcarNota = async (id) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("notas");
+      const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
+
+      const listaModificada = notasGuardadas.map((nota) => {
+        if (String(nota.id) === String(id)) {
+          return { ...nota, favourite: !props.favourite };
+        }
+        return nota;
+      });
+
+      await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
+
+      if (props.onNotaMarcada) props.onNotaMarcada();
+    } catch (e) {
+      alert("Error al marcar la nota");
+    }
+  };
+
+  const fijarNota = async (id) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("notas");
+      const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
+
+      const listaModificada = notasGuardadas.map((nota) => {
+        if (String(nota.id) === String(id)) {
+          return { ...nota, pinned: !props.pinned };
+        }
+        return nota;
+      });
+
+      await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
+
+      if (props.onNotaFijada) props.onNotaFijada();
+    } catch (e) {
+      alert("Error al fijar la nota");
+    }
+  };
+
   return (
     <>
       <Link
@@ -48,20 +93,36 @@ export const NotaMenu = (props) => {
             id: String(props.id),
             title: props.title,
             text: props.text,
+            favourite: props.favourite,
+            pinned: props.pinned,
+            date: props.date,
+            lastUpdate: props.lastUpdate,
+            colorTheme: props.colorTheme,
           },
         }}
         asChild
       >
         <Pressable
           className="w-[47%] self-start bg-[#4a4a4a] m-[7px] rounded-[10px] min-w-[150px]"
+          style={{
+            borderWidth: props.favourite == true ? 1 : 0,
+            borderColor: props.favourite == true ? "#D4AF37" : "transparent",
+          }}
           testID={`nota-${props.id}`}
         >
           <View>
             <View className="flex-row items-center justify-between bg-[#373737] rounded-t-[10px] p-[5px]">
-              <Text className="text-left text-xl text-white flex-1">
-                {props.title}
-              </Text>
-
+              <View className="flex-row items-center flex-1">
+                {props.pinned ? (
+                  <Fijar color="white" size={15} className="me-2" />
+                ) : null}
+                <Text
+                  className="text-left text-xl text-white flex-1"
+                  numberOfLines={1}
+                >
+                  {props.title}
+                </Text>
+              </View>
               <Pressable hitSlop={8} onPress={abrirMenu}>
                 <Opciones />
               </Pressable>
@@ -88,9 +149,59 @@ export const NotaMenu = (props) => {
               top: posicion.top,
               left: posicion.left,
             }}
-            className="bg-[#2d2d2d] w-[140px] rounded-xl p-1 border border-gray-700 shadow-2xl z-50"
+            className="bg-[#2d2d2d] w-[180px] rounded-xl p-1 border border-gray-700 shadow-2xl z-50"
             onPress={(e) => e.stopPropagation()}
           >
+            <Pressable
+              className="p-2 rounded-lg active:bg-[#3d3d3d]"
+              onPress={() => {
+                setMostrarMenu(false);
+                fijarNota(props.id);
+              }}
+            >
+              {props.pinned == true ? (
+                <View className="flex-row items-center">
+                  <Fijar color="white" size={21} className="me-2" />
+                  <Text className="text-slate-300 text-sm">
+                    Desfijar del inicio
+                  </Text>
+                </View>
+              ) : (
+                <View className="flex-row items-center">
+                  <Fijar color="gray" size={21} className="me-2" />
+                  <Text className="text-slate-300 text-sm">
+                    Fijar al inicio
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+            <Pressable
+              className="p-2 rounded-lg active:bg-[#3d3d3d]"
+              onPress={() => {
+                setMostrarMenu(false);
+                marcarNota(props.id);
+              }}
+            >
+              {props.favourite == true ? (
+                <View className="flex-row items-center justify-center">
+                  <FavoritoMarcado color="white" size={20} className="me-2" />
+                  <Text className="text-slate-300 text-sm">
+                    Desmarcar de favoritos
+                  </Text>
+                </View>
+              ) : (
+                <View className="flex-row items-center">
+                  <FavoritoDesmarcado
+                    color="white"
+                    size={18}
+                    className="me-2"
+                  />
+                  <Text className="text-slate-300 text-sm">
+                    Marcar en favoritos
+                  </Text>
+                </View>
+              )}
+            </Pressable>
             <Pressable
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
@@ -99,7 +210,7 @@ export const NotaMenu = (props) => {
               }}
             >
               <View className="flex-row items-center">
-                <Papelera color="white" size={18} className="me-2" />
+                <Papelera color="white" size={20} className="me-2" />
                 <Text className="text-red-400 font-medium text-sm">
                   Eliminar nota
                 </Text>
