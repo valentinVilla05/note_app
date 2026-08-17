@@ -35,7 +35,7 @@ export const Texto = (props) => {
   return <Ionicons name="text" size={25} color={"white"} {...props} />;
 };
 
-export const ColorFont = (props) => {
+export const Subrayado = (props) => {
   return <AntDesign name="font-colors" size={24} color="white" {...props} />;
 };
 

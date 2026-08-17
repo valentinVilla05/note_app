@@ -2,7 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { Link } from "expo-router";
 import { Opciones } from "./Icons";
 
-export const Nota = (props) => {
+export const NotaMenu = (props) => {
   return (
     <Link
       href={{

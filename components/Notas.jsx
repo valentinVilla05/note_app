@@ -2,13 +2,12 @@ import { View, Text } from "react-native";
 import { FlatList, Animated, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef } from "react";
-import { Nota } from "./NotaMenu";
+import { NotaMenu } from "./NotaMenu";
 import { Anadir } from "./Icons";
 import { Link } from "expo-router";
 import { listaNotas } from "../data/notas";
 
-
-export function Notas({ nota, index }) {
+export function Notas({ nota, index, listaNotas }) {
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -22,7 +21,7 @@ export function Notas({ nota, index }) {
 
   return (
     <Animated.View style={{ flex: 1, opacity }}>
-      {listaNotas.length === 0 ? (
+      {listaNotas?.length === 0 ? (
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
@@ -37,7 +36,7 @@ export function Notas({ nota, index }) {
           data={listaNotas}
           keyExtractor={(nota) => String(nota.id)}
           renderItem={({ item }) => (
-            <Nota
+            <NotaMenu
               id={item.id}
               title={item.title}
               text={

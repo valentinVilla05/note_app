@@ -1,23 +1,69 @@
-import { StyleSheet } from "react-native";
-import { View, Text, TextInput, Pressable } from "react-native";
-import { Cancelar, Adjuntar, Texto, ColorFont, Anadir, Menos } from "./Icons";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { Cancelar, Adjuntar, Texto, Subrayado, Anadir, Menos } from "./Icons";
 import { Link } from "expo-router";
 import archivo from "../assets/archivo.svg";
-import { ScrollView } from "react-native";
 import { useState } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocalSearchParams } from "expo-router";
 
 export const NuevaNota = (props) => {
   const [tamanoFuente, setTamanoFuente] = useState(20);
+  const [subrayado, setSubrayado] = useState(false);
+
+  const params = useLocalSearchParams();
+  const id = props.id || params.id;
+
+  const [titulo, setTitulo] = useState(props.title || params.title || "");
+  const [texto, setTexto] = useState(props.text || params.text || "");
+
+  const actualizarTitulo = async (nuevoTitulo) => {
+    setTitulo(nuevoTitulo);
+
+    const listaNotas = await AsyncStorage.getItem("notas");
+    const notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
+
+    const listaModificada = notasGuardadas.map((nota) => {
+      if (String(nota.id) === String(id)) {
+        return { ...nota, title: nuevoTitulo };
+      }
+      return nota;
+    });
+
+    await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
+  };
+
+  const actualizarTexto = async (nuevoTexto) => {
+    setTexto(nuevoTexto);
+
+    const listaNotas = await AsyncStorage.getItem("notas");
+    const notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
+
+    const listaModificada = notasGuardadas.map((nota) => {
+      if (String(nota.id) === String(id)) {
+        return { ...nota, text: nuevoTexto };
+      }
+      return nota;
+    });
+
+    await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
+  };
 
   return (
     <ScrollView className="mt-5 flex-1">
       <View className="mb-5" style={styles.barraHerramientas}>
-        <Pressable className="me-5 ms-5">
+        <Pressable className="me-3 ms-5">
           <Adjuntar />
         </Pressable>
         <Pressable
-          className="flex-row me-5 ms-5 justify-center items-center"
+          className="flex-row me-3 ms-3 justify-center items-center"
           color={"white"}
         >
           <Pressable onPress={() => setTamanoFuente((actual) => actual - 1)}>
@@ -35,7 +81,6 @@ export const NuevaNota = (props) => {
               }
             }}
             onBlur={() => {
-
               if (tamanoFuente === "" || tamanoFuente < 1) {
                 setTamanoFuente(1);
               }
@@ -46,8 +91,13 @@ export const NuevaNota = (props) => {
             <Anadir color="white" />
           </Pressable>
         </Pressable>
-        <Pressable className="me-5 ms-5">
-          <ColorFont />
+        <Pressable
+          className={`me-3 ms-3 p-1 rounded-md active:opacity-80 ${
+            subrayado ? "bg-[#333333]" : "bg-transparent"
+          }`}
+          onPress={() => setSubrayado((actual) => !actual)}
+        >
+          <Subrayado />
         </Pressable>
       </View>
       <SafeAreaProvider>
@@ -55,22 +105,25 @@ export const NuevaNota = (props) => {
           <View className="max-w-['100%'] ms-3 me-3">
             <TextInput
               className="mb-5 font-medium text-4xl text-white"
-              placeholder={props.title.length === 0 ? "Titulo" : props.title}
-            >
-              {props.title}
-            </TextInput>
+              placeholder="Titulo"
+              value={titulo}
+              onChangeText={actualizarTitulo}
+            />
             <TextInput
               multiline
-              style={{ fontSize: Math.max(1, tamanoFuente) }}
+              style={{
+                textDecorationLine: subrayado ? "underline" : "none",
+                fontSize: tamanoFuente,
+              }}
+              value={texto}
+              onChangeText={actualizarTexto}
               className="text-white flex-1 h-['100%']"
               placeholder={
-                props.text.length === 0
+                (texto ?? "").length === 0
                   ? "Comienza a escribir aquí..."
-                  : props.text
+                  : texto
               }
-            >
-              {props.text}
-            </TextInput>
+            ></TextInput>
           </View>
         </SafeAreaView>
       </SafeAreaProvider>
