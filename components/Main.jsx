@@ -50,6 +50,10 @@ export function Main() {
 
       const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
 
+      if (!Array.isArray(notasGuardadas)) {
+        notasGuardadas = [];
+      }
+
       // Ponemos las notas fijadas al principio
       const notasOrdenadas = notasGuardadas.sort((a,b) => {
         if (a.pinned === b.pinned) {
@@ -69,6 +73,13 @@ export function Main() {
     const fecha = formatearFecha(Date.now());
 
     try {
+      const jsonValue = await AsyncStorage.getItem("notas");
+      let notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
+
+      if (!Array.isArray(notasGuardadas)) {
+        notasGuardadas = [];
+      }
+
       const nuevaNota = {
         id: Date.now().toString(),
         title: "",
@@ -77,10 +88,11 @@ export function Main() {
         pinned: false,
         date: fecha,
         lastUpdate: fecha,
-        colorTheme: "black"
+        colorTheme: "black",
+        deleteDate: "",
       };
 
-      const nuevasNotas = [...listaNotas, nuevaNota];
+      const nuevasNotas = [...notasGuardadas, nuevaNota];
 
       await AsyncStorage.setItem("notas", JSON.stringify(nuevasNotas));
 

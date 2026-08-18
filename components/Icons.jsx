@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export const Cancelar = (props) => {
@@ -45,7 +46,7 @@ export const Menos = (props) => {
   return <AntDesign name="minus" size={24} color="white" {...props} />;
 };
 
-export const Papelera = (props) => {
+export const PapeleraIcon = (props) => {
   return (
     <Ionicons name="trash-bin-outline" size={24} color="white" {...props} />
   );
@@ -71,4 +72,24 @@ export const Circulo = (props) => {
 
 export const ColorFuente = (props) => {
   return <MaterialIcons name="format-color-text" size={22} color="black" {...props} />;
+}
+
+export const Contrasena = (props) => {
+  return <AntDesign name="lock" size={24} color="black" {...props}/>;
+}
+
+export const Archivado = (props) => {
+  return <Ionicons name="archive-outline" size={24} color="black" {...props} />;
+}
+
+export const Ajustes = (props) => {
+  return <Ionicons name="settings-outline" size={24} color="black" {...props}/>;
+}
+
+export const Notas = (props) => {
+  return <FontAwesome name="sticky-note-o" size={24} color="black" {...props} />;
+}
+
+export const RestaurarIcon = (props) => {
+  return <FontAwesome5 name="recycle" size={24} color="black" {...props} />;
 }

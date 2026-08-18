@@ -50,6 +50,7 @@ export function Notas({
               date={item.date}
               lastUpdate={item.lastUpdate}
               colorTheme={item.colorTheme}
+              deleteDate={item.deleteDate}
               style={styles.nota}
               onNotaEliminada={onNotaEliminada}
               onNotaMarcada={onNotaMarcada}

@@ -12,7 +12,7 @@ import {
   FavoritoMarcado,
   Fijar,
   Opciones,
-  Papelera,
+  PapeleraIcon,
 } from "./Icons";
 import { useState, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -59,14 +59,36 @@ export const NotaMenu = (props) => {
 
   const eliminarNota = async (id) => {
     try {
-      const jsonValue = await AsyncStorage.getItem("notas");
-      const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
+      const listaNotas = await AsyncStorage.getItem("notas");
+      let notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
 
-      const notasFiltradas = notasGuardadas.filter(
+      if (!Array.isArray(notasGuardadas)) {
+        notasGuardadas = [];
+      }
+
+      const listaPapelera = await AsyncStorage.getItem("papelera");
+      let papeleraGuardada =
+        listaPapelera != null ? JSON.parse(listaPapelera) : [];
+
+      // Comprobación de seguridad
+      if (!Array.isArray(papeleraGuardada)) {
+        papeleraGuardada = [];
+      }
+
+      const notaABorrar = notasGuardadas.find(
+        (nota) => String(nota.id) === String(id),
+      );
+      if (!notaABorrar) return;
+
+      const notaFechaBorrado = { ...notaABorrar, deleteDate: Date.now() };
+
+      const nuevaPapelera = [...papeleraGuardada, notaFechaBorrado];
+      await AsyncStorage.setItem("papelera", JSON.stringify(nuevaPapelera));
+
+      const nuevasNotas = notasGuardadas.filter(
         (nota) => String(nota.id) !== String(id),
       );
-
-      await AsyncStorage.setItem("notas", JSON.stringify(notasFiltradas));
+      await AsyncStorage.setItem("notas", JSON.stringify(nuevasNotas));
 
       if (props.onNotaEliminada) props.onNotaEliminada();
     } catch (e) {
@@ -156,7 +178,7 @@ export const NotaMenu = (props) => {
             className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden"
             style={{
               transform: [{ scale: scaleAnim }],
-              borderWidth: props.favourite ? 1 : 0,
+              borderWidth: props.favourite ? 2 : 0,
               borderColor: props.favourite ? "#D4AF37" : "transparent",
             }}
           >
@@ -275,7 +297,7 @@ export const NotaMenu = (props) => {
               }}
             >
               <View className="flex-row items-center">
-                <Papelera color="white" size={20} className="me-2" />
+                <PapeleraIcon color="white" size={20} className="me-2" />
                 <Text className="text-red-400 font-medium text-sm">
                   Eliminar nota
                 </Text>

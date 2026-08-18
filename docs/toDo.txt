@@ -1,11 +1,8 @@
-* ActivityIndicator (no aparecer de repente)
-* Mirar como manejar el almacenamiento
-* Posicionar bien el boton de "Nueva nota"
-* Panel Lateral
-* Menus desplegables
+* Archivar notas
+* Papelera
 
-* Barra de herramientas en editor de texto
 
+* Gestor de contraseñas
 
 Manejo de datos:
  * Expo SecureStore -> Gestor de contraseñas
