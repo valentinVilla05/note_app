@@ -16,10 +16,12 @@ import {
 } from "./Icons";
 import { useState, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { coloresFondo, coloresToolBar as coloresTitulo } from "../data/utils";
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [posicion, setPosicion] = useState({ top: 0, left: 0 });
+  const colorTheme = props.colorTheme;
 
   // Animación suave de escala
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -112,6 +114,20 @@ export const NotaMenu = (props) => {
     }
   };
 
+  const quitarHTML = (html) => {
+    if (!html) return "";
+    return html
+      .replace(/<[^>]+>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .trim();
+  };
+
+  const textoPlano = quitarHTML(props.text);
+
   return (
     <>
       <Link
@@ -133,7 +149,7 @@ export const NotaMenu = (props) => {
         <Pressable
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
-          className="w-[47%] self-start m-[7px]"
+          className="w-[47%] self-startModal m-[7px]"
           testID={`nota-${props.id}`}
         >
           <Animated.View
@@ -144,7 +160,14 @@ export const NotaMenu = (props) => {
               borderColor: props.favourite ? "#D4AF37" : "transparent",
             }}
           >
-            <View className="flex-row items-center justify-between bg-[#373737] rounded-t-[10px] p-[5px]">
+            <View
+              className="flex-row items-center justify-between bg-[#373737] rounded-t-[10px] p-[5px]"
+              style={{
+                backgroundColor:
+                  colorTheme == "black" ? "#373737" : coloresTitulo[colorTheme],
+                color: colorTheme === "black" ? "#FFFFFF" : "#000000",
+              }}
+            >
               <View className="flex-row items-center flex-1">
                 {props.pinned ? (
                   <Fijar color="white" size={15} className="me-2" />
@@ -160,9 +183,18 @@ export const NotaMenu = (props) => {
                 <Opciones />
               </Pressable>
             </View>
-            <View>
-              <Text className="text-white p-[5px] font-light text-sm">
-                {props.text}
+            <View
+              className="flex-1"
+              style={{
+                backgroundColor:
+                  colorTheme == "black" ? "#909090" : coloresFondo[colorTheme],
+                color: colorTheme === "white" ? "#FFFFFF" : "#000000",
+              }}
+            >
+              <Text className="p-[5px] font-light text-sm">
+                {textoPlano.length >= 100
+                  ? textoPlano.slice(0, 100).concat("...")
+                  : textoPlano}
               </Text>
             </View>
           </Animated.View>

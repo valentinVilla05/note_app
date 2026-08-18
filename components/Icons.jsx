@@ -1,5 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export const Cancelar = (props) => {
   return <Ionicons name="close" size={24} color={"white"} {...props} />;
@@ -61,4 +63,12 @@ export const FavoritoMarcado = (props) => {
 
 export const Fijar = (props) => {
   return <AntDesign name="pushpin" size={24} color="black" {...props}/>;
+}
+
+export const Circulo = (props) => {
+  return <FontAwesome name="circle" size={22} color="black" {...props} />;
+}
+
+export const ColorFuente = (props) => {
+  return <MaterialIcons name="format-color-text" size={22} color="black" {...props} />;
 }

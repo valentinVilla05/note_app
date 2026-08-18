@@ -44,11 +44,7 @@ export function Notas({
             <NotaMenu
               id={item.id}
               title={item.title}
-              text={
-                item.text.length > 100
-                  ? item.text.slice(0, 100).concat("...")
-                  : item.text
-              }
+              text={item.text}
               favourite={item.favourite}
               pinned={item.pinned}
               date={item.date}
