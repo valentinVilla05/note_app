@@ -1,14 +1,15 @@
 {
   "expo": {
-    "name": "note_app",
+    "name": "Notas",
     "slug": "note_app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icono.png",
     "userInterfaceStyle": "light",
     "scheme": "notes",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.note-app"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,7 +21,7 @@
       "package": "com.anonymous.note_app"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icono.png"
     },
     "plugins": [
       "expo-router"

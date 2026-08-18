@@ -6,7 +6,9 @@ export default function tabsLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#e17f29",
-        tabBarStyle: { backgroundColor: "#181818" },
+        tabBarInactiveTintColor: "#bdbdbd",
+        tabBarLabelStyle: { fontSize: 12, fontWeight: "500", marginTop: 2 },
+        tabBarStyle: { backgroundColor: "#181818", paddingBottom: 10 },
         headerStyle: { backgroundColor: "#181818" },
         headerTintColor: "white",
         headerShown: false,
@@ -16,7 +18,8 @@ export default function tabsLayout() {
         name="index"
         options={{
           title: "Mis Notas",
-          tabBarIcon: ({ color }) => <Notas color={"white"} />,
+          tabBarIcon: ({ color }) => <Notas color={"white"}
+          />,
         }}
       />
 

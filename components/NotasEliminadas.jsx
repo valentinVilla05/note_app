@@ -110,8 +110,8 @@ export const NotasEliminadas = (props) => {
             className="flex-1"
             style={{
               backgroundColor:
-                colorTheme == "black" ? "#909090" : coloresFondo[colorTheme],
-              color: colorTheme === "white" ? "#FFFFFF" : "#000000",
+                colorTheme == "black" ? "#374151" : coloresFondo[colorTheme],
+              color: colorTheme === "black" ? "#FFFFFF" : "#000000",
             }}
           >
             <Text className="p-[5px] font-light text-sm">

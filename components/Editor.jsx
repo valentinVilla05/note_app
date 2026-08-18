@@ -18,7 +18,6 @@ import {
 } from "./Icons";
 
 import { Link } from "expo-router";
-import archivo from "../assets/archivo.svg";
 import { useState, useRef, use } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -42,9 +41,14 @@ export const Editor = (props) => {
     props.text || params.text || "",
   );
   const [lastUpdate, setLastUpdate] = useState(props.lastUpdate || "");
-  const [colorTheme, setColorTheme] = useState(
+  const [colorInterno, setColorInterno] = useState(
     props.colorTheme || params.colorTheme || "black",
   );
+  const colorTheme = props.colorTheme ?? colorInterno;
+  const setColorTheme = (nuevo) => {
+    setColorInterno(nuevo);
+    if (props.onColorChange) props.onColorChange(nuevo);
+  };
 
   const actualizarTitulo = async (nuevoTitulo) => {
     const fecha = Date.now();

@@ -16,7 +16,6 @@ import {
 import { Notas } from "./Notas";
 import { Link, router, useFocusEffect } from "expo-router";
 import Constants from "expo-constants";
-import anadir from "../assets/anadirIcon.png";
 import { Anadir, Escribir } from "./Icons";
 import { Screen } from "./Screen";
 import { useEffect, useState, useCallback } from "react";

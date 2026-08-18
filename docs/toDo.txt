@@ -1,4 +1,3 @@
-* Archivar notas
 
 
 * Gestor de contraseñas

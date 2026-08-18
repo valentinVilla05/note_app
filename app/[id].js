@@ -30,7 +30,10 @@ export default function NotaAmpliada() {
           headerRight: () => <Text />,
         }}
       />
-      <Editor/>
+      <Editor
+        colorTheme={colorTheme}
+        onColorChange={setColorTheme}
+      />
     </Screen>
   );
 }

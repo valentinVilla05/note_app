@@ -224,8 +224,8 @@ export const NotaMenu = (props) => {
               className="flex-1"
               style={{
                 backgroundColor:
-                  colorTheme == "black" ? "#909090" : coloresFondo[colorTheme],
-                color: colorTheme === "white" ? "#FFFFFF" : "#000000",
+                  colorTheme == "black" ? "#374151" : coloresFondo[colorTheme],
+                color: colorTheme === "black" ? "#FFFFFF" : "#000000",
               }}
             >
               <Text className="p-[5px] font-light text-sm">
@@ -273,29 +273,31 @@ export const NotaMenu = (props) => {
                 </View>
               )}
             </Pressable>
-            <Pressable
-              className="p-2 rounded-lg active:bg-[#3d3d3d]"
-              onPress={() => {
-                setMostrarMenu(false);
-                fijarNota(props.id);
-              }}
-            >
-              {props.pinned == true ? (
-                <View className="flex-row items-center">
-                  <Fijar color="white" size={21} className="me-2" />
-                  <Text className="text-slate-300 text-sm">
-                    Desfijar del inicio
-                  </Text>
-                </View>
-              ) : (
-                <View className="flex-row items-center">
-                  <Fijar color="gray" size={21} className="me-2" />
-                  <Text className="text-slate-300 text-sm">
-                    Fijar al inicio
-                  </Text>
-                </View>
-              )}
-            </Pressable>
+            {props.archived != true && (
+              <Pressable
+                className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                onPress={() => {
+                  setMostrarMenu(false);
+                  fijarNota(props.id);
+                }}
+              >
+                {props.pinned == true ? (
+                  <View className="flex-row items-center">
+                    <Fijar color="white" size={21} className="me-2" />
+                    <Text className="text-slate-300 text-sm">
+                      Desfijar del inicio
+                    </Text>
+                  </View>
+                ) : (
+                  <View className="flex-row items-center">
+                    <Fijar color="gray" size={21} className="me-2" />
+                    <Text className="text-slate-300 text-sm">
+                      Fijar al inicio
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+            )}
             <Pressable
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {

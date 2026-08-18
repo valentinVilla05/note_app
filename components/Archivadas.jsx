@@ -57,6 +57,10 @@ export const Archivadas = () => {
                 colorTheme={item.colorTheme}
                 deleteDate={item.deleteDate}
                 archived={item.archived}
+                onNotaEliminada={conseguirNotasArchivadas}
+                onNotaMarcada={conseguirNotasArchivadas}
+                onNotaFijada={conseguirNotasArchivadas}
+                onNotaArchivada={conseguirNotasArchivadas}
               ></NotaMenu>
             )}
           ></FlatList>

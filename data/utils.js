@@ -21,20 +21,20 @@ export const quitarHTML = (html) => {
 };
 
 export const coloresFondo = {
-  black: "#181818",
-  green: "#7DCEA0",
-  blue: "#85C1E9",
-  yellow: "#F9E79F",
-  red: "#FFA2A2",
-  pink: "#FCCEE8",
-  white: "#f0f0f0",
+  black: "#3F4754",
+  green: "#A5C9A8",
+  blue: "#A6BFD5",
+  yellow: "#E8D5A0",
+  red: "#DAA8A8",
+  pink: "#DCB1C5",
+  white: "#D6D8DC",
 };
 export const coloresToolBar = {
-  black: "#101010",
-  green: "#145A32",
-  blue: "#1B4F72",
-  yellow: "#9A7D0A",
-  red: "#FF6467",
-  pink: "#F6339A",
-  white: "#E2E8F0",
+  black: "#2D3748",
+  green: "#4A6E5A",
+  blue: "#4A6585",
+  yellow: "#806020",
+  red: "#7A4848",
+  pink: "#7A4862",
+  white: "#5A6373",
 };
