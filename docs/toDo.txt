@@ -1,5 +1,4 @@
 * Archivar notas
-* Papelera
 
 
 * Gestor de contraseñas

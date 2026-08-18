@@ -12,6 +12,7 @@ export function Notas({
   onNotaEliminada,
   onNotaMarcada,
   onNotaFijada,
+  onNotaArchivada,
 }) {
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -23,6 +24,8 @@ export function Notas({
       useNativeDriver: true,
     }).start();
   }, [opacity, index]);
+
+  const listaNotasNoArchivadas = listaNotas.filter((nota) => nota.archived == false || nota.archived == null)
 
   return (
     <Animated.View style={{ flex: 1, opacity }}>
@@ -38,7 +41,7 @@ export function Notas({
       ) : (
         <FlatList
           numColumns={2}
-          data={listaNotas}
+          data={listaNotasNoArchivadas}
           keyExtractor={(nota) => String(nota.id)}
           renderItem={({ item }) => (
             <NotaMenu
@@ -51,10 +54,12 @@ export function Notas({
               lastUpdate={item.lastUpdate}
               colorTheme={item.colorTheme}
               deleteDate={item.deleteDate}
+              archived={item.archived}
               style={styles.nota}
               onNotaEliminada={onNotaEliminada}
               onNotaMarcada={onNotaMarcada}
               onNotaFijada={onNotaFijada}
+              onNotaArchivada={onNotaArchivada}
             />
           )}
         />

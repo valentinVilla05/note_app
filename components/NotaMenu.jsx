@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 import {
+  Archivado,
   FavoritoDesmarcado,
   FavoritoMarcado,
   Fijar,
@@ -16,7 +17,11 @@ import {
 } from "./Icons";
 import { useState, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { coloresFondo, coloresToolBar as coloresTitulo } from "../data/utils";
+import {
+  coloresFondo,
+  coloresToolBar as coloresTitulo,
+  quitarHTML,
+} from "../data/utils";
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -136,16 +141,24 @@ export const NotaMenu = (props) => {
     }
   };
 
-  const quitarHTML = (html) => {
-    if (!html) return "";
-    return html
-      .replace(/<[^>]+>/g, "")
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .trim();
+  const archivarNota = async (id) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("notas");
+      const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
+
+      const listaModificada = notasGuardadas.map((nota) => {
+        if (String(nota.id) === String(id)) {
+          return { ...nota, archived: !props.archived };
+        }
+        return nota;
+      });
+
+      await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
+
+      if (props.onNotaArchivada) props.onNotaArchivada();
+    } catch (e) {
+      alert("Error al archivar la nota");
+    }
   };
 
   const textoPlano = quitarHTML(props.text);
@@ -164,6 +177,8 @@ export const NotaMenu = (props) => {
             date: props.date,
             lastUpdate: props.lastUpdate,
             colorTheme: props.colorTheme,
+            deleteDate: props.deleteDate,
+            archived: props.archived,
           },
         }}
         asChild
@@ -239,6 +254,25 @@ export const NotaMenu = (props) => {
             className="bg-[#2d2d2d] w-[180px] rounded-xl p-1 border border-gray-700 shadow-2xl z-50"
             onPress={(e) => e.stopPropagation()}
           >
+            <Pressable
+              className="p-2 rounded-lg active:bg-[#3d3d3d]"
+              onPress={() => {
+                setMostrarMenu(false);
+                archivarNota(props.id);
+              }}
+            >
+              {props.archived == true ? (
+                <View className="flex-row items-center">
+                  <Archivado color="white" size={21} className="me-2" />
+                  <Text className="text-slate-300 text-sm">Desarchivar</Text>
+                </View>
+              ) : (
+                <View className="flex-row items-center">
+                  <Archivado color="gray" size={21} className="me-2" />
+                  <Text className="text-slate-300 text-sm">Archivar</Text>
+                </View>
+              )}
+            </Pressable>
             <Pressable
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {

@@ -8,12 +8,19 @@ import {
   Animated,
 } from "react-native";
 import { Main } from "../components/Main";
-import { Ajustes, Archivado, Contrasena, Menu } from "../components/Icons";
+import {
+  Ajustes,
+  Archivado,
+  Contrasena,
+  Menu,
+  Notas,
+} from "../components/Icons";
 import { useRef, useState } from "react";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 import { coloresToolBar as colorHeader } from "../data/utils";
 
 const anchoMenu = Dimensions.get("window").width * 0.6;
@@ -28,7 +35,7 @@ export default function Layout() {
     setMostrarMenu(true);
     Animated.timing(animacionX, {
       toValue: 0,
-      duration: 300,
+      duration: 400,
       useNativeDriver: true,
     }).start();
   };
@@ -79,32 +86,48 @@ export default function Layout() {
             style={{ transform: [{ translateX: animacionX }] }}
             className="w-[60%] bg-[#181818] h-full p-6 z-50 border-r border-gray-800 shadow-2xl"
           >
-            <Pressable
-              onPress={() => {
-                alert("Proximamente");
-                setMostrarMenu(false);
+            <Link
+              href={{
+                pathname: "/",
               }}
+              asChild
             >
-              <View className="flex-row">
+              <Pressable
+                className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
+                onPress={() => setMostrarMenu(false)}
+              >
+                <Notas color={"white"} size={22} className="me-3" />
+                <Text className="text-white text-xl ">Mis notas</Text>
+              </Pressable>
+            </Link>
+            <Link
+              href={{
+                pathname: "archivo",
+              }}
+              asChild
+            >
+              <Pressable
+                className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
+                onPress={() => setMostrarMenu(false)}
+              >
                 <Archivado
                   color={"white"}
                   size={22}
                   className="me-3"
                 ></Archivado>
-                <Text className="text-white text-xl  mb-8 ">
-                  Notas archivadas
-                </Text>
-              </View>
-            </Pressable>
+                <Text className="text-white text-xl ">Notas archivadas</Text>
+              </Pressable>
+            </Link>
             <Pressable
               onPress={() => {
                 alert("Proximamente");
                 setMostrarMenu(false);
               }}
+              className="active:rounded-md active:bg-[#3d3d3d]"
             >
-              <View className="flex-row ">
+              <View className="p-4 rounded-md flex-row items-center">
                 <Contrasena color={"white"} size={22} className="me-3" />
-                <Text className="text-white text-xl  mb-8 ">
+                <Text className="text-white text-xl ">
                   Gestor de contraseñas
                 </Text>
               </View>
@@ -114,10 +137,11 @@ export default function Layout() {
                 alert("Proximamente");
                 setMostrarMenu(false);
               }}
+              className="active:rounded-md active:bg-[#3d3d3d]"
             >
-              <View className="flex-row ">
+              <View className="p-4 rounded-md flex-row items-center ">
                 <Ajustes color={"white"} size={22} className="me-3" />
-                <Text className="text-white text-xl  mb-8 ">Ajustes</Text>
+                <Text className="text-white text-xl ">Ajustes</Text>
               </View>
             </Pressable>
           </Animated.View>

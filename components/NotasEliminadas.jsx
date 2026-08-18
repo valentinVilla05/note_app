@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { Opciones, PapeleraIcon, RestaurarIcon } from "./Icons";
 import { useState, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { coloresFondo, coloresToolBar as coloresTitulo } from "../data/utils";
+import { coloresFondo, coloresToolBar as coloresTitulo, quitarHTML } from "../data/utils";
 
 export const NotasEliminadas = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -23,7 +23,7 @@ export const NotasEliminadas = (props) => {
     setMostrarMenu(true);
   };
 
-  const textoPlano = props.text ? props.text.replace(/<[^>]+>/g, "") : "";
+  const textoPlano = quitarHTML(props.text)
 
   const restaurarNota = async (id) => {
     try {

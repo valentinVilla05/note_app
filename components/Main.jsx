@@ -90,6 +90,7 @@ export function Main() {
         lastUpdate: fecha,
         colorTheme: "black",
         deleteDate: "",
+        archived: false
       };
 
       const nuevasNotas = [...notasGuardadas, nuevaNota];
@@ -120,6 +121,7 @@ export function Main() {
               onNotaEliminada={cargarNotas}
               onNotaMarcada={cargarNotas}
               onNotaFijada={cargarNotas}
+              onNotaArchivada={cargarNotas}
             />
           </View>
           <View style={styles.botonAnadir}>

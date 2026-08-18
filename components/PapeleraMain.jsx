@@ -24,41 +24,54 @@ export function PapeleraMain() {
       }
 
       const papeleraFiltrada = papelera.filter((nota) => {
-        if(!nota.deleteDate) return true;
+        if (!nota.deleteDate) return true;
         return Date.now() - nota.deleteDate < 2592000000;
       });
 
-      if ( papeleraFiltrada.length !== papelera.length) {
-        await AsyncStorage.setItem("papelera", JSON.stringify(papeleraFiltrada))
+      if (papeleraFiltrada.length !== papelera.length) {
+        await AsyncStorage.setItem(
+          "papelera",
+          JSON.stringify(papeleraFiltrada),
+        );
       }
 
-      setPapeleraGuardadas(papeleraFiltrada)
+      setPapeleraGuardadas(papeleraFiltrada);
     } catch (error) {
       console.error("Error al cargar la papelera:", error);
     }
   };
   return (
     <View className="flex-1 bg-['#181818'] items-center justify-center">
-      <FlatList
-        numColumns={2}
-        data={papeleraGuardadas}
-        keyExtractor={(nota) => String(nota.id)}
-        renderItem={({ item }) => (
-          <NotasEliminadas
-            id={item.id}
-            title={item.title}
-            text={item.text}
-            favourite={item.favourite}
-            pinned={item.pinned}
-            date={item.date}
-            lastUpdate={item.lastUpdate}
-            colorTheme={item.colorTheme}
-            deleteDate={item.deleteDate}
-            onNotaEliminadaPermanentemente={cargarNotasBorradas()}
-            onNotaRestaurada={cargarNotasBorradas()}
-          />
-        )}
-      />
+      {papeleraGuardadas?.length === 0 ? (
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text style={{ color: "#717171" }}>
+            No hay notas en la papelera.
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          numColumns={2}
+          data={papeleraGuardadas}
+          keyExtractor={(nota) => String(nota.id)}
+          renderItem={({ item }) => (
+            <NotasEliminadas
+              id={item.id}
+              title={item.title}
+              text={item.text}
+              favourite={item.favourite}
+              pinned={item.pinned}
+              date={item.date}
+              lastUpdate={item.lastUpdate}
+              colorTheme={item.colorTheme}
+              deleteDate={item.deleteDate}
+              onNotaEliminadaPermanentemente={cargarNotasBorradas()}
+              onNotaRestaurada={cargarNotasBorradas()}
+            />
+          )}
+        />
+      )}
     </View>
   );
 }
