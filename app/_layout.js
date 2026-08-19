@@ -15,18 +15,23 @@ import {
   Menu,
   Notas,
 } from "../components/Icons";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { coloresToolBar as colorHeader } from "../data/utils";
+import { migrateFromAsyncStorage } from "../db/migrator";
 
 const anchoMenu = Dimensions.get("window").width * 0.6;
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    migrateFromAsyncStorage();
+  }, []);
 
   const animacionX = useRef(new Animated.Value(-anchoMenu)).current;
   const [mostrarMenu, setMostrarMenu] = useState(false);

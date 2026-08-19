@@ -34,7 +34,7 @@ const campos = {
 const camposBooleanos = new Set(["pinned", "favourite", "archived"]);
 
 // Solo convierte las keys presentes en el input.
-function toDb(note) {
+export function toDb(note) {
   const result = {};
   for (const key of Object.keys(note)) {
     const dbKey = campos[key];
