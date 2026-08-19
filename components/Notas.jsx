@@ -5,14 +5,10 @@ import { useEffect, useRef } from "react";
 import { NotaMenu } from "./NotaMenu";
 import { Anadir } from "./Icons";
 import { Link } from "expo-router";
+import { useActiveNotes } from "../hooks/useNotes";
 
 export function Notas({
   index,
-  listaNotas,
-  onNotaEliminada,
-  onNotaMarcada,
-  onNotaFijada,
-  onNotaArchivada,
 }) {
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -25,11 +21,10 @@ export function Notas({
     }).start();
   }, [opacity, index]);
 
-  const listaNotasNoArchivadas = listaNotas.filter((nota) => nota.archived == false || nota.archived == null)
-
+  const [notas, refreshNotas] = useActiveNotes();
   return (
     <Animated.View style={{ flex: 1, opacity }}>
-      {listaNotas?.length === 0 ? (
+      {notas.length === 0 ? (
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
@@ -41,25 +36,19 @@ export function Notas({
       ) : (
         <FlatList
           numColumns={2}
-          data={listaNotasNoArchivadas}
+          data={notas}
           keyExtractor={(nota) => String(nota.id)}
           renderItem={({ item }) => (
             <NotaMenu
               id={item.id}
               title={item.title}
-              text={item.text}
+              content={item.content}
               favourite={item.favourite}
               pinned={item.pinned}
-              date={item.date}
-              lastUpdate={item.lastUpdate}
               colorTheme={item.colorTheme}
-              deleteDate={item.deleteDate}
               archived={item.archived}
+              onRefresh={refreshNotas}
               style={styles.nota}
-              onNotaEliminada={onNotaEliminada}
-              onNotaMarcada={onNotaMarcada}
-              onNotaFijada={onNotaFijada}
-              onNotaArchivada={onNotaArchivada}
             />
           )}
         />

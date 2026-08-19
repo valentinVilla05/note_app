@@ -1,9 +1,12 @@
 import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
-import { Link } from "expo-router";
 import { Opciones, PapeleraIcon, RestaurarIcon } from "./Icons";
 import { useState, useRef } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { coloresFondo, coloresToolBar as coloresTitulo, quitarHTML } from "../data/utils";
+import {
+  coloresFondo,
+  coloresToolBar as coloresTitulo,
+  quitarHTML,
+} from "../data/utils";
+import { permanentDelete, restoreNote } from "../db/notesRepository";
 
 export const NotasEliminadas = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -23,63 +26,24 @@ export const NotasEliminadas = (props) => {
     setMostrarMenu(true);
   };
 
-  const textoPlano = quitarHTML(props.text)
+  const textoPlano = quitarHTML(props.content);
 
   const restaurarNota = async (id) => {
     try {
-      const listaNotas = await AsyncStorage.getItem("notas");
-      let notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
-
-      if (!Array.isArray(notasGuardadas)) {
-        notasGuardadas = [];
-      }
-
-      const listaPapelera = await AsyncStorage.getItem("papelera");
-      let papeleraGuardada =
-        listaPapelera != null ? JSON.parse(listaPapelera) : [];
-
-      // Comprobación de seguridad
-      if (!Array.isArray(papeleraGuardada)) {
-        papeleraGuardada = [];
-      }
-
-      const notaARestaurar = papeleraGuardada.find(
-        (nota) => String(nota.id) === String(id),
-      );
-      
-      if (!notaARestaurar) return;
-
-      const notaSinFechaBorrado = { ...notaARestaurar, deleteDate: "" };
-
-      const nuevasNotas = [...notasGuardadas, notaSinFechaBorrado];
-      await AsyncStorage.setItem("notas", JSON.stringify(nuevasNotas));
-
-      const nuevaPapelera = papeleraGuardada.filter(
-        (nota) => String(nota.id) !== String(id),
-      );
-      await AsyncStorage.setItem("papelera", JSON.stringify(nuevaPapelera));
-
-      if (props.onNotaRestaurada) props.onNotaRestaurada;
+      await restoreNote(id);
+      props.onRefresh?.();
     } catch (e) {
       alert("Error al restaurar la nota");
     }
   };
 
   const eliminarPermanentemente = async (id) => {
-    const listaEliminadas = await AsyncStorage.getItem("papelera");
-    const eliminadas =
-      listaEliminadas !== null ? JSON.parse(listaEliminadas) : [];
-
-    const notasfiltradas = eliminadas.filter((nota) => 
-      String(nota.id) !== String(id)
-    );
-    await AsyncStorage.setItem("papelera", JSON.stringify(notasfiltradas));
-
-    if (props.onNotaEliminadaPermanentemente) {
-      props.onNotaEliminadaPermanentemente;
+    try {
+      await permanentDelete(id);
+      props.onRefresh?.();
+    } catch (e) {
+      alert("Error al eliminar la nota");
     }
-
-  
   };
 
   return (

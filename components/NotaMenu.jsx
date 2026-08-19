@@ -16,12 +16,12 @@ import {
   PapeleraIcon,
 } from "./Icons";
 import { useState, useRef } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   coloresFondo,
   coloresToolBar as coloresTitulo,
   quitarHTML,
 } from "../data/utils";
+import { softDeleteNote, updateNote } from "../db/notesRepository";
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -64,38 +64,8 @@ export const NotaMenu = (props) => {
 
   const eliminarNota = async (id) => {
     try {
-      const listaNotas = await AsyncStorage.getItem("notas");
-      let notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
-
-      if (!Array.isArray(notasGuardadas)) {
-        notasGuardadas = [];
-      }
-
-      const listaPapelera = await AsyncStorage.getItem("papelera");
-      let papeleraGuardada =
-        listaPapelera != null ? JSON.parse(listaPapelera) : [];
-
-      // Comprobación de seguridad
-      if (!Array.isArray(papeleraGuardada)) {
-        papeleraGuardada = [];
-      }
-
-      const notaABorrar = notasGuardadas.find(
-        (nota) => String(nota.id) === String(id),
-      );
-      if (!notaABorrar) return;
-
-      const notaFechaBorrado = { ...notaABorrar, deleteDate: Date.now() };
-
-      const nuevaPapelera = [...papeleraGuardada, notaFechaBorrado];
-      await AsyncStorage.setItem("papelera", JSON.stringify(nuevaPapelera));
-
-      const nuevasNotas = notasGuardadas.filter(
-        (nota) => String(nota.id) !== String(id),
-      );
-      await AsyncStorage.setItem("notas", JSON.stringify(nuevasNotas));
-
-      if (props.onNotaEliminada) props.onNotaEliminada();
+      await softDeleteNote(id);
+      props.onRefresh?.();
     } catch (e) {
       alert("Error al eliminar la nota");
     }
@@ -103,19 +73,8 @@ export const NotaMenu = (props) => {
 
   const marcarNota = async (id) => {
     try {
-      const jsonValue = await AsyncStorage.getItem("notas");
-      const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
-
-      const listaModificada = notasGuardadas.map((nota) => {
-        if (String(nota.id) === String(id)) {
-          return { ...nota, favourite: !props.favourite };
-        }
-        return nota;
-      });
-
-      await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
-
-      if (props.onNotaMarcada) props.onNotaMarcada();
+      await updateNote(id, { favourite: !props.favourite });
+      props.onRefresh?.();
     } catch (e) {
       alert("Error al marcar la nota");
     }
@@ -123,19 +82,8 @@ export const NotaMenu = (props) => {
 
   const fijarNota = async (id) => {
     try {
-      const jsonValue = await AsyncStorage.getItem("notas");
-      const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
-
-      const listaModificada = notasGuardadas.map((nota) => {
-        if (String(nota.id) === String(id)) {
-          return { ...nota, pinned: !props.pinned };
-        }
-        return nota;
-      });
-
-      await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
-
-      if (props.onNotaFijada) props.onNotaFijada();
+      await updateNote(id, { pinned: !props.pinned });
+      props.onRefresh?.();
     } catch (e) {
       alert("Error al fijar la nota");
     }
@@ -143,25 +91,14 @@ export const NotaMenu = (props) => {
 
   const archivarNota = async (id) => {
     try {
-      const jsonValue = await AsyncStorage.getItem("notas");
-      const notasGuardadas = jsonValue != null ? JSON.parse(jsonValue) : [];
-
-      const listaModificada = notasGuardadas.map((nota) => {
-        if (String(nota.id) === String(id)) {
-          return { ...nota, archived: !props.archived };
-        }
-        return nota;
-      });
-
-      await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
-
-      if (props.onNotaArchivada) props.onNotaArchivada();
+      await updateNote(id, { archived: !props.archived });
+      props.onRefresh?.();
     } catch (e) {
       alert("Error al archivar la nota");
     }
   };
 
-  const textoPlano = quitarHTML(props.text);
+  const textoPlano = quitarHTML(props.content);
 
   return (
     <>
@@ -171,13 +108,10 @@ export const NotaMenu = (props) => {
           params: {
             id: String(props.id),
             title: props.title,
-            text: props.text,
+            content: props.content,
             favourite: props.favourite,
             pinned: props.pinned,
-            date: props.date,
-            lastUpdate: props.lastUpdate,
             colorTheme: props.colorTheme,
-            deleteDate: props.deleteDate,
             archived: props.archived,
           },
         }}
@@ -225,10 +159,14 @@ export const NotaMenu = (props) => {
               style={{
                 backgroundColor:
                   colorTheme == "black" ? "#374151" : coloresFondo[colorTheme],
-                color: colorTheme === "black" ? "#FFFFFF" : "#000000",
               }}
             >
-              <Text className="p-[5px] font-light text-sm">
+              <Text
+                className="p-[5px] text-sm"
+                style={{
+                  color: colorTheme === "black" ? "#CCCCCC" : "#000000",
+                }}
+              >
                 {textoPlano.length >= 100
                   ? textoPlano.slice(0, 100).concat("...")
                   : textoPlano}

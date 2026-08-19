@@ -1,11 +1,11 @@
-
+* Compartir notas
+* Seleccionar varias notas
+* Adjuntar imagenes, audios
+* Sonidos
 
 * Gestor de contraseñas
 
-Manejo de datos:
- * Expo SecureStore -> Gestor de contraseñas
- * Expo Filesystem -> Gestor de imagenes, audios u archivos
- * Async Storage -> Gestor de las notas
+* Refactorizar
 
 * Picker -> Ventana de seleccion
 
@@ -13,40 +13,25 @@ Manejo de datos:
 * Personalizacion
 
 Futuro: 
- * Opcion de hacer notas en la nube vinculadas con el pc (Supabase?)
- * Poder conectar a google
+ * App en web con React + Supabase
 
 
+Manejo de datos:
+ * Expo SecureStore -> Gestor de contraseñas
+ * Expo Filesystem -> Gestor de imagenes, audios u archivos
+ * Async Storage -> Gestor de las notas
 
 
 --------- Instalacion -------------
 
- Opción 1: Compilar e instalar la versión Release (Recomendada)
-
-Ejecuta este comando en la terminal de VS Code con tu teléfono conectado por USB:
-
-Bash
 npx expo run:android --variant release
-¿Qué hace este comando?
 
-Empaqueta todo tu código JavaScript y assets dentro del ejecutable nativo.
 
-Compila el archivo final para producción.
-
-Lo instala automáticamente en tu dispositivo.
-
-Una vez que termine, puedes desconectar el móvil de la computadora y la app abrirá y funcionará sin problemas.
-
-Opción 2: Generar el archivo APK para instalarlo manualmente
-
-Si prefieres generar el archivo .apk para guardarlo o pasártelo al móvil por WhatsApp/Telegram:
-
-Genera la compilación de Release:
 
 Bash
 cd android
 ./gradlew assembleRelease
-El archivo ejecutable quedará guardado en esta ruta dentro de tu proyecto:
+
+
 android/app/build/outputs/apk/release/app-release.apk
 
-Flujo de trabajo recomendado: Mientras estés programando y haciendo cambios diarios, usa la versión normal (npx expo run:android) para ver los cambios al instante en pantalla. Cuando quieras probar la app "en la vida real" o llevarla contigo en el móvil, compílala con --variant release.

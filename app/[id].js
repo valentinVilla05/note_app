@@ -8,7 +8,6 @@ import { coloresFondo, coloresToolBar as colorHeader } from "../data/utils";
 
 export default function NotaAmpliada() {
   const params = useLocalSearchParams();
-  const { id, title, text } = useLocalSearchParams();
 
   const [colorTheme, setColorTheme] = useState(params.colorTheme || "black");
 

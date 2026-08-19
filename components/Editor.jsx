@@ -6,29 +6,20 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import {
-  Cancelar,
-  Adjuntar,
-  Texto,
-  Subrayado,
-  Anadir,
-  Menos,
-  Opciones,
-  Circulo,
-} from "./Icons";
+import { Opciones, Circulo } from "./Icons";
 
-import { Link } from "expo-router";
-import { useState, useRef, use } from "react";
+import { useEffect, useState, useRef } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
-import { formatearFecha, coloresFondo, coloresToolBar } from "../data/utils";
+import { coloresFondo, coloresToolBar } from "../data/utils";
 import {
   actions,
   RichToolbar,
   RichEditor,
 } from "react-native-pell-rich-editor";
 import { Modal } from "react-native";
+import { updateNote } from "../db/notesRepository";
+import { useNote } from "../hooks/useNotes";
 
 export const Editor = (props) => {
   const richTextRef = useRef(null);
@@ -36,11 +27,10 @@ export const Editor = (props) => {
   const params = useLocalSearchParams();
   const id = props.id || params.id;
 
-  const [titulo, setTitulo] = useState(props.title || params.title || "");
-  const [contenidoHTML, setContenidoHTML] = useState(
-    props.text || params.text || "",
-  );
-  const [lastUpdate, setLastUpdate] = useState(props.lastUpdate || "");
+  const [nota] = useNote(id);
+
+  const [titulo, setTitulo] = useState("");
+  const [contenidoHTML, setContenidoHTML] = useState(props.content || params.content || "");
   const [colorInterno, setColorInterno] = useState(
     props.colorTheme || params.colorTheme || "black",
   );
@@ -50,57 +40,42 @@ export const Editor = (props) => {
     if (props.onColorChange) props.onColorChange(nuevo);
   };
 
+  useEffect(() => {
+    if (nota) {
+      setTitulo(nota.title || "");
+      setContenidoHTML(nota.content || "");
+      if (nota.colorTheme) setColorInterno(nota.colorTheme);
+    }
+  }, [nota?.id]);
+
   const actualizarTitulo = async (nuevoTitulo) => {
-    const fecha = Date.now();
-    setTitulo(nuevoTitulo);
-    setLastUpdate(fecha);
-
-    const listaNotas = await AsyncStorage.getItem("notas");
-    const notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
-
-    const listaModificada = notasGuardadas.map((nota) => {
-      if (String(nota.id) === String(id)) {
-        return { ...nota, title: nuevoTitulo, lastUpdate: fecha };
-      }
-      return nota;
-    });
-
-    await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
+    try {
+      setTitulo(nuevoTitulo)
+      await updateNote(id, { title: nuevoTitulo });
+    } catch (e) {
+      console.error("[Editor] actualizarTitulo:", e);
+      alert("Error al guardar el título");
+    }
   };
 
   const actualizarTexto = async (nuevoHTML) => {
-    const fecha = Date.now();
-
-    setContenidoHTML(nuevoHTML);
-    setLastUpdate(fecha);
-
-    const listaNotas = await AsyncStorage.getItem("notas");
-    const notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
-
-    const listaModificada = notasGuardadas.map((nota) => {
-      if (String(nota.id) === String(id)) {
-        return { ...nota, text: nuevoHTML, lastUpdate: fecha };
-      }
-      return nota;
-    });
-
-    await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
+    try {
+      setContenidoHTML(nuevoHTML);
+      await updateNote(id, { content: nuevoHTML });
+    } catch (e) {
+      console.error("[Editor] actualizarTexto:", e);
+      alert("Error al guardar el texto");
+    }
   };
 
   const actualizarColor = async (nuevoColor) => {
-    setColorTheme(nuevoColor);
-
-    const listaNotas = await AsyncStorage.getItem("notas");
-    const notasGuardadas = listaNotas != null ? JSON.parse(listaNotas) : [];
-
-    const listaModificada = notasGuardadas.map((nota) => {
-      if (String(nota.id) === String(id)) {
-        return { ...nota, colorTheme: nuevoColor };
-      }
-      return nota;
-    });
-
-    await AsyncStorage.setItem("notas", JSON.stringify(listaModificada));
+    try {
+      setColorTheme(nuevoColor);
+      await updateNote(id, { colorTheme: nuevoColor });
+    } catch (e) {
+      console.error("[Editor] actualizarColor:", e);
+      alert("Error al guardar el color");
+    }
   };
 
   // Añadimos acciones personalizadas:
