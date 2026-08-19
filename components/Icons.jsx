@@ -93,3 +93,7 @@ export const Notas = (props) => {
 export const RestaurarIcon = (props) => {
   return <FontAwesome5 name="recycle" size={24} color="black" {...props} />;
 }
+
+export const Compartir = (props) => {
+  return <FontAwesome name="share" size={24} color="black"  {...props} />
+}

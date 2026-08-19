@@ -135,7 +135,8 @@ export const Editor = (props) => {
       uriReal = guardarImagen(uri);
 
       richTextRef.current?.insertImage(uri, {
-        width: "100%",
+        maxWidth: "100%",
+        height: "auto",
         style: { margin: 8 },
       });
     }

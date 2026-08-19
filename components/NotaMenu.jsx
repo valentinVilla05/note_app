@@ -9,6 +9,7 @@ import {
 import { Link } from "expo-router";
 import {
   Archivado,
+  Compartir,
   FavoritoDesmarcado,
   FavoritoMarcado,
   Fijar,
@@ -22,6 +23,9 @@ import {
   quitarHTML,
 } from "../data/utils";
 import { softDeleteNote, updateNote } from "../db/notesRepository";
+import { printToFileAsync } from "expo-print";
+import { shareAsync } from "expo-sharing";
+import { expandirImagenesEnHTML } from "../data/images";
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -96,6 +100,23 @@ export const NotaMenu = (props) => {
     } catch (e) {
       alert("Error al archivar la nota");
     }
+  };
+
+  const compartirNota = async (id) => {
+    const html = await expandirImagenesEnHTML(props.content);
+
+    const file = await printToFileAsync({
+      html: `
+        <html>
+        <body> 
+        <h1>${props.title}</h1>
+        ${html}
+        </body>
+        </html>
+      `,
+      base64: false,
+    });
+    await shareAsync(file.uri);
   };
 
   const textoPlano = quitarHTML(props.content);
@@ -192,6 +213,18 @@ export const NotaMenu = (props) => {
             className="bg-[#2d2d2d] w-[180px] rounded-xl p-1 border border-gray-700 shadow-2xl z-50"
             onPress={(e) => e.stopPropagation()}
           >
+            <Pressable
+              className="p-2 rounded-lg active:bg-[#3d3d3d]"
+              onPress={() => {
+                setMostrarMenu(false);
+                compartirNota(props.id);
+              }}
+            >
+              <View className="flex-row items-center">
+                <Compartir color="gray" size={21} className="me-2" />
+                <Text className="text-slate-300 text-sm">Compartir</Text>
+              </View>
+            </Pressable>
             <Pressable
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
