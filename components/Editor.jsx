@@ -1,4 +1,5 @@
 import {
+  Alert,
   View,
   Text,
   TextInput,
@@ -20,6 +21,8 @@ import {
 import { Modal } from "react-native";
 import { updateNote } from "../db/notesRepository";
 import { useNote } from "../hooks/useNotes";
+import * as ImagePicker from "expo-image-picker";
+import { guardarImagen } from "../data/images";
 
 export const Editor = (props) => {
   const richTextRef = useRef(null);
@@ -30,7 +33,9 @@ export const Editor = (props) => {
   const [nota] = useNote(id);
 
   const [titulo, setTitulo] = useState("");
-  const [contenidoHTML, setContenidoHTML] = useState(props.content || params.content || "");
+  const [contenidoHTML, setContenidoHTML] = useState(
+    props.content || params.content || "",
+  );
   const [colorInterno, setColorInterno] = useState(
     props.colorTheme || params.colorTheme || "black",
   );
@@ -50,7 +55,7 @@ export const Editor = (props) => {
 
   const actualizarTitulo = async (nuevoTitulo) => {
     try {
-      setTitulo(nuevoTitulo)
+      setTitulo(nuevoTitulo);
       await updateNote(id, { title: nuevoTitulo });
     } catch (e) {
       console.error("[Editor] actualizarTitulo:", e);
@@ -100,6 +105,39 @@ export const Editor = (props) => {
       }
     } else if (accion === actions.alignLeft) {
       setAlineacionActual(actions.alignLeft);
+    }
+  };
+
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert(
+        "Permission required",
+        "Permission to access the media library is required.",
+      );
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 0.8,
+    });
+
+    console.log(result);
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const uri = result.assets[0].uri;
+      let uriReal = null;
+
+      uriReal = guardarImagen(uri);
+
+      richTextRef.current?.insertImage(uri, {
+        width: "100%",
+        style: { margin: 8 },
+      });
     }
   };
 
@@ -170,6 +208,7 @@ export const Editor = (props) => {
               actions.insertImage,
               accionOpciones,
             ]}
+            onPressAddImage={pickImage}
             onPressAction={accionesToolBar}
             iconMap={{
               [accionOpciones]: ({ tintColor }) => (
@@ -211,6 +250,9 @@ export const Editor = (props) => {
               />
 
               <RichEditor
+                allowFileAccess={true}
+                allowFileAccessFromFileURLs={true}
+                allowUniversalAccessFromFileURLs={true}
                 ref={richTextRef}
                 placeholder={"Comienza a escribir aquí"}
                 initialContentHTML={contenidoHTML}
