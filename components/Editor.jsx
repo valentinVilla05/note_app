@@ -177,20 +177,21 @@ export const Editor = (props) => {
             ]}
             iconMap={{
               [actions.undo]: ({ tintColor }) => (
-                <Pressable hitSlop={7}>
                   <Deshacer color={tintColor} />
-                </Pressable>
               ),
               [actions.redo]: ({ tintColor }) => (
-                <Pressable hitSlop={7}>
                   <Rehacer color={tintColor} />
-                </Pressable>
               ),
               [compartir]: ({ tintColor }) => (
                 <Pressable
                   hitSlop={7}
                   onPress={() => {
-                    compartirNota(id, titulo, contenidoHTML);
+                    compartirNota(
+                      id,
+                      titulo,
+                      contenidoHTML,
+                      coloresFondo[colorTheme],
+                    );
                   }}
                 >
                   <CompartirEditor

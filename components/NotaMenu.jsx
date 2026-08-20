@@ -199,7 +199,7 @@ export const NotaMenu = (props) => {
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
                 setMostrarMenu(false);
-                compartirNota(props.id, props.title, props.content);
+                compartirNota(props.id, props.title, props.content, coloresFondo[props.colorTheme]);
               }}
             >
               <View className="flex-row items-center">

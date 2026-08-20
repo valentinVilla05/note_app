@@ -42,7 +42,7 @@ export const coloresToolBar = {
   white: "#5A6373",
 };
 
-export const compartirNota = async (id, title, content) => {
+export const compartirNota = async (id, title, content, colorTheme) => {
   const html = await expandirImagenesEnHTML(content);
 
   const file = await printToFileAsync({
@@ -50,8 +50,12 @@ export const compartirNota = async (id, title, content) => {
         <html>
         <head>
           <style>
+          @page {
+            margin: 40px 30px 80px 30px;  
+            background-color: ${colorTheme}
+          }
             h1 {
-             font-size: 20px; page-break-after: avoid; 
+             page-break-after: avoid; 
             }
             img {
               max-width: 80%;
@@ -62,7 +66,10 @@ export const compartirNota = async (id, title, content) => {
           </style>
         </head>
         <body> 
-        <h1>${title}</h1>
+        <div style="display: flex; justify-content: center">
+          <h1>${title}</h1>
+        </div>
+        <hr style="color: 'gray'; margin-bottom: 20px" width=80%>
         ${html}
         </body>
         </html>
