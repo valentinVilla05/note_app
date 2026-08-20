@@ -17,6 +17,8 @@ import {
   Deshacer,
   Rehacer,
   CompartirEditor,
+  ZoomInIcon,
+  ZoomOutIcon,
 } from "./Icons";
 
 import { useEffect, useState, useRef } from "react";
@@ -96,29 +98,9 @@ export const Editor = (props) => {
   // Añadimos acciones personalizadas:
   const accionOpciones = "accion_opciones";
   const compartir = "compartir";
+  const zoomIn = "aumentarZoom";
+  const zoomOut = "disminuirZoom";
 
-  const [alineacionActual, setAlineacionActual] = useState(actions.alignLeft); // Estado para controlar los alineados
-  const [encabezado, setEncabezado] = useState(actions.heading1);
-  const accionesToolBar = (accion) => {
-    if (accion === accionOpciones) {
-      abrirMenu();
-    }
-
-    if (
-      [actions.alignCenter, actions.alignRight, actions.alignLeft].includes(
-        accion,
-      )
-    ) {
-      if (alineacionActual === accion) {
-        richTextRef.current?.sendAction(actions.alignLeft);
-        setAlineacionActual(actions.alignLeft);
-      } else {
-        setAlineacionActual(accion);
-      }
-    } else if (accion === actions.alignLeft) {
-      setAlineacionActual(actions.alignLeft);
-    }
-  };
 
   const pickImage = async () => {
     const permissionResult =
@@ -147,7 +129,7 @@ export const Editor = (props) => {
       uriReal = guardarImagen(uri);
 
       richTextRef.current?.insertImage(uri, {
-        maxWidth: "100%",
+        maxWidth: "80%",
         height: "auto",
         style: { margin: 8 },
       });
@@ -219,7 +201,6 @@ export const Editor = (props) => {
                 </Pressable>
               ),
             }}
-            onPressAction={accionesToolBar}
             iconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
             selectedIconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
             selectedButtonStyle={{
@@ -253,7 +234,6 @@ export const Editor = (props) => {
               accionOpciones,
             ]}
             onPressAddImage={pickImage}
-            onPressAction={accionesToolBar}
             iconMap={{
               [accionOpciones]: ({ tintColor }) => (
                 <Pressable hitSlop={7} onPress={abrirMenu}>
@@ -261,19 +241,13 @@ export const Editor = (props) => {
                 </Pressable>
               ),
               [actions.heading1]: ({ tintColor }) => (
-                <Pressable hitSlop={7}>
-                  <Encabezado1 color={tintColor} />
-                </Pressable>
+                <Encabezado1 color={tintColor} />
               ),
               [actions.heading2]: ({ tintColor }) => (
-                <Pressable hitSlop={7}>
-                  <Encabezado2 color={tintColor} />
-                </Pressable>
+                <Encabezado2 color={tintColor} />
               ),
               [actions.heading3]: ({ tintColor }) => (
-                <Pressable hitSlop={7}>
-                  <Encabezado3 color={tintColor} />
-                </Pressable>
+                <Encabezado3 color={tintColor} />
               ),
             }}
             iconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
@@ -309,6 +283,7 @@ export const Editor = (props) => {
               />
 
               <RichEditor
+                useContainer={false}
                 allowFileAccess={true}
                 allowFileAccessFromFileURLs={true}
                 allowUniversalAccessFromFileURLs={true}

@@ -111,8 +111,8 @@ export const Compartir = (props) => {
 };
 
 export const CompartirEditor = (props) => {
-  return <AntDesign name="share-alt" size={24} color="black" {...props}/>;
-}
+  return <AntDesign name="share-alt" size={24} color="black" {...props} />;
+};
 
 export const Encabezado1 = (props) => {
   return (
@@ -152,4 +152,12 @@ export const Deshacer = (props) => {
 
 export const Rehacer = (props) => {
   return <MaterialIcons name="redo" size={24} color="black" {...props} />;
+};
+
+export const ZoomInIcon = (props) => {
+  return <AntDesign name="zoom-in" size={24} color="black" {...props} />;
+};
+
+export const ZoomOutIcon = (props) => {
+  return <AntDesign name="zoom-out" size={24} color="black" {...props} />;
 };
