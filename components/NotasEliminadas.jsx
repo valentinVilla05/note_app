@@ -1,4 +1,11 @@
-import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Modal,
+  Animated,
+} from "react-native";
 import { Opciones, PapeleraIcon, RestaurarIcon } from "./Icons";
 import { useState, useRef } from "react";
 import {
@@ -7,6 +14,8 @@ import {
   quitarHTML,
 } from "../data/utils";
 import { permanentDelete, restoreNote } from "../db/notesRepository";
+import * as Haptics from "expo-haptics";
+import { use } from "react";
 
 export const NotasEliminadas = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -46,10 +55,76 @@ export const NotasEliminadas = (props) => {
     }
   };
 
+  const scaleBorrada = useRef(new Animated.Value(1)).current;
+  const opacityAnim = useRef(new Animated.Value(1)).current;
+
+  const animacionRestaurar = (id) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+
+    Animated.parallel([
+      Animated.timing(scaleBorrada, {
+        toValue: 0.1,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 0,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+    ]).start(() => restaurarNota(id));
+  };
+
+  const rotacion = useRef(new Animated.Value(0)).current;
+  const trasladoY = useRef(new Animated.Value(0)).current;
+  const opacidad = useRef(new Animated.Value(1)).current;
+
+  const animacionEliminadoPermanente = (id) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+
+    Animated.parallel([
+      Animated.timing(rotacion, {
+        toValue: 0.5,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(trasladoY, {
+        toValue: 1000,
+        duration: 1500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacidad, {
+        toValue: 0,
+        duration: 1250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => eliminarPermanentemente(id));
+  };
+
   return (
     <>
       <Pressable className="flex-1 min-w-[47%] self-startModal m-[7px]">
-        <View className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden">
+        <Animated.View
+          className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden"
+          style={{
+            opacity: opacityAnim,
+            transform: [
+              {
+                rotate: rotacion.interpolate({
+                  inputRange: [0, 10],
+                  outputRange: ["0deg", "180deg"],
+                }),
+              },
+              {
+                translateY: trasladoY.interpolate({
+                  inputRange: [0, 500, 850, 1000],
+                  outputRange: [0, 100, 300, 1000], 
+                }),
+              },
+              { scale: scaleBorrada },
+            ],
+          }}
+        >
           <View
             className="flex-row items-center justify-between bg-[#373737] rounded-t-[10px] p-[5px]"
             style={{
@@ -75,16 +150,21 @@ export const NotasEliminadas = (props) => {
             style={{
               backgroundColor:
                 colorTheme == "black" ? "#374151" : coloresFondo[colorTheme],
-              color: colorTheme === "black" ? "#FFFFFF" : "#000000",
+              color: colorTheme === "black" ? "white" : "black",
             }}
           >
-            <Text className="p-[5px] font-light text-sm">
+            <Text
+              className="p-[5px] text-sm"
+              style={{
+                color: colorTheme === "black" ? "#CCCCCC" : "#000000",
+              }}
+            >
               {textoPlano.length >= 100
                 ? textoPlano.slice(0, 100).concat("...")
                 : textoPlano}
             </Text>
           </View>
-        </View>
+        </Animated.View>
       </Pressable>
 
       <Modal
@@ -107,7 +187,7 @@ export const NotasEliminadas = (props) => {
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
                 setMostrarMenu(false);
-                restaurarNota(props.id);
+                animacionRestaurar(props.id);
               }}
             >
               <View className="flex-row items-center">
@@ -121,7 +201,7 @@ export const NotasEliminadas = (props) => {
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
                 setMostrarMenu(false);
-                eliminarPermanentemente(props.id);
+                animacionEliminadoPermanente(props.id);
               }}
             >
               <View className="flex-row items-center">

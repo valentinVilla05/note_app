@@ -17,7 +17,7 @@ export const Archivadas = () => {
     Animated.timing(opacity, {
       duration: 400,
       toValue: 1,
-      delay: 500,
+      delay: 300,
       useNativeDriver: true,
     }).start();
   }, [opacity]);

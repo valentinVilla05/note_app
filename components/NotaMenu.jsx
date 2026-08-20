@@ -21,10 +21,11 @@ import {
   coloresFondo,
   coloresToolBar as coloresTitulo,
   quitarHTML,
-  compartirNota
+  compartirNota,
 } from "../data/utils";
 import { softDeleteNote, updateNote } from "../db/notesRepository";
-
+import { secuenciaTrasladoY } from "../data/animations";
+import * as Haptics from "expo-haptics";
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -52,6 +53,42 @@ export const NotaMenu = (props) => {
     }).start();
   };
 
+  const animacionTrasladoY = useRef(new Animated.Value(0)).current;
+
+  const animacionArchivar = (id) => {
+    secuenciaTrasladoY(
+      animacionTrasladoY,
+      [
+        [50, 300],
+        [-700, 500],
+      ],
+      () => archivarNota(id),
+    );
+  };
+
+  const scaleBorrada = useRef(new Animated.Value(1)).current;
+  const opacityAnim = useRef(new Animated.Value(1)).current;
+  const escalaFinal = useRef(
+    Animated.multiply(scaleAnim, scaleBorrada),
+  ).current;
+
+  const animacionEliminar = (id) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+
+    Animated.parallel([
+      Animated.timing(scaleBorrada, {
+        toValue: 0.1,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 0,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+    ]).start(() => eliminarNota(id));
+  };
+
   const abrirMenu = (event) => {
     event.stopPropagation();
 
@@ -69,6 +106,7 @@ export const NotaMenu = (props) => {
     try {
       await softDeleteNote(id);
       props.onRefresh?.();
+      
     } catch (e) {
       alert("Error al eliminar la nota");
     }
@@ -124,12 +162,15 @@ export const NotaMenu = (props) => {
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           className="w-[47%] self-startModal m-[7px]"
-          testID={`nota-${props.id}`}
         >
           <Animated.View
             className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden"
             style={{
-              transform: [{ scale: scaleAnim }],
+              opacity: opacityAnim,
+              transform: [
+                { scale: escalaFinal },
+                { translateY: animacionTrasladoY },
+              ],
               borderWidth: props.favourite ? 2 : 0,
               borderColor: props.favourite ? "#D4AF37" : "transparent",
             }}
@@ -199,7 +240,12 @@ export const NotaMenu = (props) => {
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
                 setMostrarMenu(false);
-                compartirNota(props.id, props.title, props.content, coloresFondo[props.colorTheme]);
+                compartirNota(
+                  props.id,
+                  props.title,
+                  props.content,
+                  coloresFondo[props.colorTheme],
+                );
               }}
             >
               <View className="flex-row items-center">
@@ -211,7 +257,7 @@ export const NotaMenu = (props) => {
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
                 setMostrarMenu(false);
-                archivarNota(props.id);
+                animacionArchivar(props.id);
               }}
             >
               {props.archived == true ? (
@@ -282,7 +328,7 @@ export const NotaMenu = (props) => {
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
                 setMostrarMenu(false);
-                eliminarNota(props.id);
+                animacionEliminar(props.id);
               }}
             >
               <View className="flex-row items-center">
