@@ -206,6 +206,7 @@ export const Editor = (props) => {
               ),
               [compartir]: ({ tintColor }) => (
                 <Pressable
+                  hitSlop={7}
                   onPress={() => {
                     compartirNota(id, titulo, contenidoHTML);
                   }}

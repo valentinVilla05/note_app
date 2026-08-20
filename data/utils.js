@@ -48,6 +48,19 @@ export const compartirNota = async (id, title, content) => {
   const file = await printToFileAsync({
     html: `
         <html>
+        <head>
+          <style>
+            h1 {
+             font-size: 20px; page-break-after: avoid; 
+            }
+            img {
+              max-width: 80%;
+              margin-left: 50px;
+              height: auto;
+              page-break-inside: avoid;
+            }
+          </style>
+        </head>
         <body> 
         <h1>${title}</h1>
         ${html}
