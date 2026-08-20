@@ -11,6 +11,7 @@ import { Main } from "../components/Main";
 import {
   Ajustes,
   Archivado,
+  Privado,
   Contrasena,
   Menu,
   Notas,
@@ -119,8 +120,26 @@ export default function Layout() {
                   color={"white"}
                   size={22}
                   className="me-3"
-                ></Archivado>
+                />
                 <Text className="text-white text-xl ">Notas archivadas</Text>
+              </Pressable>
+            </Link>
+            <Link
+              href={{
+                pathname: "privado",
+              }}
+              asChild
+            >
+              <Pressable
+                className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
+                onPress={() => setMostrarMenu(false)}
+              >
+                <Privado
+                  color={"white"}
+                  size={22}
+                  className="me-3"
+                />
+                <Text className="text-white text-xl ">Notas Privadas</Text>
               </Pressable>
             </Link>
             <Pressable

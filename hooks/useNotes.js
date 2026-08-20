@@ -5,6 +5,7 @@ import {
   getActiveNotes,
   getArchivedNotes,
   getDeletedNotes,
+  getHiddenNotes,
   getNoteById,
 } from "../db/notesRepository";
 
@@ -30,6 +31,18 @@ export function useArchivedNotes() {
   useFocusEffect(cargarArchivadas);
 
   return [listaArchivadas, cargarArchivadas];
+}
+
+export function useHiddenNotes () {
+  const [listaOcultas, setListaOcultas] = useState([]);
+
+  const cargarOcultas = useCallback(() => {
+    getHiddenNotes().then(setListaOcultas);
+  }, []);
+
+  useFocusEffect(cargarOcultas)
+
+  return [listaOcultas, cargarOcultas];
 }
 
 export function useDeletedNotes() {

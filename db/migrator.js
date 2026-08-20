@@ -10,6 +10,7 @@ const TRASH_KEY = "papelera";
 export async function migrateFromAsyncStorage() {
   try {
     const flag = await AsyncStorage.getItem(MIGRATION_FLAG);
+    
     if (flag) return;
 
     await runMigrations();

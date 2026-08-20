@@ -161,3 +161,7 @@ export const ZoomInIcon = (props) => {
 export const ZoomOutIcon = (props) => {
   return <AntDesign name="zoom-out" size={24} color="black" {...props} />;
 };
+
+export const Privado = (props) => {
+  return <AntDesign name="eye-invisible" size={24} color="black" {...props}/>;
+}

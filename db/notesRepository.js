@@ -12,6 +12,7 @@ function mapRow(row) {
     pinned: Boolean(row.pinned),
     favourite: Boolean(row.favourite),
     archived: Boolean(row.archived),
+    hidden: Boolean(row.hidden),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     deletedAt: row.deleted_at,
@@ -26,12 +27,13 @@ const campos = {
   pinned: "pinned",
   favourite: "favourite",
   archived: "archived",
+  hidden: "hidden",
   createdAt: "created_at",
   updatedAt: "updated_at",
   deletedAt: "deleted_at",
 };
 
-const camposBooleanos = new Set(["pinned", "favourite", "archived"]);
+const camposBooleanos = new Set(["pinned", "favourite", "archived", "hidden"]);
 
 // Solo convierte las keys presentes en el input.
 export function toDb(note) {
@@ -52,7 +54,7 @@ function idGenerator() {
 export async function getActiveNotes() {
   const db = await getDatabase();
 
-  const sql = `SELECT * FROM notes WHERE deleted_at IS NULL AND archived = 0 ORDER BY pinned DESC, updated_at DESC`;
+  const sql = `SELECT * FROM notes WHERE deleted_at IS NULL AND archived = 0 AND hidden = 0 ORDER BY pinned DESC, updated_at DESC`;
   const rows = await db.getAllAsync(sql);
 
   const rowsConverted = rows.map(mapRow);
@@ -63,6 +65,16 @@ export async function getActiveNotes() {
 export async function getArchivedNotes() {
   const db = await getDatabase();
   const sql = `SELECT * FROM notes WHERE deleted_at IS NULL AND archived = 1 ORDER BY updated_at DESC`;
+  const rows = await db.getAllAsync(sql);
+
+  const rowsConverted = rows.map(mapRow);
+
+  return rowsConverted;
+}
+
+export async function getHiddenNotes() {
+  const db = await getDatabase();
+  const sql = `SELECT * FROM notes WHERE deleted_at IS NULL AND hidden = 1 ORDER BY updated_at DESC`;
   const rows = await db.getAllAsync(sql);
 
   const rowsConverted = rows.map(mapRow);
@@ -103,12 +115,13 @@ export async function createNote(note) {
     pinned: note.pinned || false,
     favourite: note.favourite || false,
     archived: note.archived || false,
+    hidden: note.hidden || false,
     createdAt: date,
     updatedAt: date,
     deletedAt: null,
   };
 
-  const sql = `INSERT INTO notes (id, title, content, color_theme, pinned, favourite, archived, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO notes (id, title, content, color_theme, pinned, favourite, archived, hidden, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   const result = await db.runAsync(sql, Object.values(toDb(newNote)));
 

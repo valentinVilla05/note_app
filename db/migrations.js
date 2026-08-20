@@ -26,6 +26,27 @@ const MIGRATIONS = [
       `);
     },
   },
+  {
+    version: 2,
+    up: async (db) => {
+      const cols = await db.getAllAsync(`PRAGMA table_info(notes)`);
+      const yaTieneHidden = cols.some((c) => c.name === "hidden");
+      if (!yaTieneHidden) {
+        await db.execAsync(
+          `ALTER TABLE notes ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;`,
+        );
+      }
+
+      const indices = await db.getAllAsync(
+        `SELECT name FROM sqlite_master WHERE type='index' AND name='idx_notes_hidden'`,
+      );
+      if (indices.length === 0) {
+        await db.execAsync(
+          `CREATE INDEX IF NOT EXISTS idx_notes_hidden ON notes(deleted_at, hidden)`,
+        );
+      }
+    },
+  },
 ];
 
 export async function runMigrations() {

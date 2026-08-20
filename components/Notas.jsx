@@ -46,6 +46,7 @@ export function Notas({
               pinned={item.pinned}
               colorTheme={item.colorTheme}
               archived={item.archived}
+              hidden={item.hidden}
               onRefresh={refreshNotas}
               style={styles.nota}
             />
