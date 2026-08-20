@@ -1,3 +1,6 @@
+import { printToFileAsync } from "expo-print";
+import { shareAsync } from "expo-sharing";
+import { expandirImagenesEnHTML } from "../data/images";
 export const formatearFecha = (timestamp) => {
   if (!timestamp) return "";
   const fecha = new Date(timestamp);
@@ -37,4 +40,21 @@ export const coloresToolBar = {
   red: "#7A4848",
   pink: "#7A4862",
   white: "#5A6373",
+};
+
+export const compartirNota = async (id, title, content) => {
+  const html = await expandirImagenesEnHTML(content);
+
+  const file = await printToFileAsync({
+    html: `
+        <html>
+        <body> 
+        <h1>${title}</h1>
+        ${html}
+        </body>
+        </html>
+      `,
+    base64: false,
+  });
+  await shareAsync(file.uri);
 };

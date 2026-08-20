@@ -3,6 +3,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export const Cancelar = (props) => {
   return <Ionicons name="close" size={24} color={"white"} {...props} />;
@@ -63,37 +64,92 @@ export const FavoritoMarcado = (props) => {
 };
 
 export const Fijar = (props) => {
-  return <AntDesign name="pushpin" size={24} color="black" {...props}/>;
-}
+  return <AntDesign name="pushpin" size={24} color="black" {...props} />;
+};
 
 export const Circulo = (props) => {
   return <FontAwesome name="circle" size={22} color="black" {...props} />;
-}
+};
 
 export const ColorFuente = (props) => {
-  return <MaterialIcons name="format-color-text" size={22} color="black" {...props} />;
-}
+  return (
+    <MaterialIcons
+      name="format-color-text"
+      size={22}
+      color="black"
+      {...props}
+    />
+  );
+};
 
 export const Contrasena = (props) => {
-  return <AntDesign name="lock" size={24} color="black" {...props}/>;
-}
+  return <AntDesign name="lock" size={24} color="black" {...props} />;
+};
 
 export const Archivado = (props) => {
   return <Ionicons name="archive-outline" size={24} color="black" {...props} />;
-}
+};
 
 export const Ajustes = (props) => {
-  return <Ionicons name="settings-outline" size={24} color="black" {...props}/>;
-}
+  return (
+    <Ionicons name="settings-outline" size={24} color="black" {...props} />
+  );
+};
 
 export const Notas = (props) => {
-  return <FontAwesome name="sticky-note-o" size={24} color="black" {...props} />;
-}
+  return (
+    <FontAwesome name="sticky-note-o" size={24} color="black" {...props} />
+  );
+};
 
 export const RestaurarIcon = (props) => {
   return <FontAwesome5 name="recycle" size={24} color="black" {...props} />;
-}
+};
 
 export const Compartir = (props) => {
-  return <FontAwesome name="share" size={24} color="black"  {...props} />
+  return <FontAwesome name="share" size={24} color="black" {...props} />;
+};
+
+export const CompartirEditor = (props) => {
+  return <AntDesign name="share-alt" size={24} color="black" {...props}/>;
 }
+
+export const Encabezado1 = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name="format-header-1"
+      size={24}
+      color="black"
+      {...props}
+    />
+  );
+};
+
+export const Encabezado2 = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name="format-header-2"
+      size={24}
+      color="black"
+      {...props}
+    />
+  );
+};
+export const Encabezado3 = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name="format-header-3"
+      size={24}
+      color="black"
+      {...props}
+    />
+  );
+};
+
+export const Deshacer = (props) => {
+  return <MaterialIcons name="undo" size={24} color="black" {...props} />;
+};
+
+export const Rehacer = (props) => {
+  return <MaterialIcons name="redo" size={24} color="black" {...props} />;
+};

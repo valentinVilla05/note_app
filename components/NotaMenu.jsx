@@ -21,11 +21,10 @@ import {
   coloresFondo,
   coloresToolBar as coloresTitulo,
   quitarHTML,
+  compartirNota
 } from "../data/utils";
 import { softDeleteNote, updateNote } from "../db/notesRepository";
-import { printToFileAsync } from "expo-print";
-import { shareAsync } from "expo-sharing";
-import { expandirImagenesEnHTML } from "../data/images";
+
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -100,23 +99,6 @@ export const NotaMenu = (props) => {
     } catch (e) {
       alert("Error al archivar la nota");
     }
-  };
-
-  const compartirNota = async (id) => {
-    const html = await expandirImagenesEnHTML(props.content);
-
-    const file = await printToFileAsync({
-      html: `
-        <html>
-        <body> 
-        <h1>${props.title}</h1>
-        ${html}
-        </body>
-        </html>
-      `,
-      base64: false,
-    });
-    await shareAsync(file.uri);
   };
 
   const textoPlano = quitarHTML(props.content);
@@ -217,7 +199,7 @@ export const NotaMenu = (props) => {
               className="p-2 rounded-lg active:bg-[#3d3d3d]"
               onPress={() => {
                 setMostrarMenu(false);
-                compartirNota(props.id);
+                compartirNota(props.id, props.title, props.content);
               }}
             >
               <View className="flex-row items-center">

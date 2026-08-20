@@ -7,12 +7,22 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { Opciones, Circulo } from "./Icons";
+import {
+  Opciones,
+  Circulo,
+  Encabezado2,
+  Encabezado3,
+  Encabezado1,
+  Compartir,
+  Deshacer,
+  Rehacer,
+  CompartirEditor,
+} from "./Icons";
 
 import { useEffect, useState, useRef } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
-import { coloresFondo, coloresToolBar } from "../data/utils";
+import { coloresFondo, coloresToolBar, compartirNota } from "../data/utils";
 import {
   actions,
   RichToolbar,
@@ -85,8 +95,10 @@ export const Editor = (props) => {
 
   // Añadimos acciones personalizadas:
   const accionOpciones = "accion_opciones";
+  const compartir = "compartir";
 
   const [alineacionActual, setAlineacionActual] = useState(actions.alignLeft); // Estado para controlar los alineados
+  const [encabezado, setEncabezado] = useState(actions.heading1);
   const accionesToolBar = (accion) => {
     if (accion === accionOpciones) {
       abrirMenu();
@@ -179,7 +191,33 @@ export const Editor = (props) => {
               actions.code,
               actions.undo,
               actions.redo,
+              compartir,
             ]}
+            iconMap={{
+              [actions.undo]: ({ tintColor }) => (
+                <Pressable hitSlop={7}>
+                  <Deshacer color={tintColor} />
+                </Pressable>
+              ),
+              [actions.redo]: ({ tintColor }) => (
+                <Pressable hitSlop={7}>
+                  <Rehacer color={tintColor} />
+                </Pressable>
+              ),
+              [compartir]: ({ tintColor }) => (
+                <Pressable
+                  onPress={() => {
+                    compartirNota(id, titulo, contenidoHTML);
+                  }}
+                >
+                  <CompartirEditor
+                    color={tintColor}
+                    size={21}
+                    className="me-2"
+                  />
+                </Pressable>
+              ),
+            }}
             onPressAction={accionesToolBar}
             iconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
             selectedIconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
@@ -202,6 +240,10 @@ export const Editor = (props) => {
             }}
             editor={richTextRef}
             actions={[
+              actions.heading1,
+              actions.heading2,
+              actions.heading3,
+              actions.indent,
               actions.alignLeft,
               actions.alignCenter,
               actions.alignRight,
@@ -215,6 +257,21 @@ export const Editor = (props) => {
               [accionOpciones]: ({ tintColor }) => (
                 <Pressable hitSlop={7} onPress={abrirMenu}>
                   <Opciones color={tintColor} />
+                </Pressable>
+              ),
+              [actions.heading1]: ({ tintColor }) => (
+                <Pressable hitSlop={7}>
+                  <Encabezado1 color={tintColor} />
+                </Pressable>
+              ),
+              [actions.heading2]: ({ tintColor }) => (
+                <Pressable hitSlop={7}>
+                  <Encabezado2 color={tintColor} />
+                </Pressable>
+              ),
+              [actions.heading3]: ({ tintColor }) => (
+                <Pressable hitSlop={7}>
+                  <Encabezado3 color={tintColor} />
                 </Pressable>
               ),
             }}
@@ -239,7 +296,7 @@ export const Editor = (props) => {
               className="flex-1"
             >
               <TextInput
-                className="ps-5 pt-5 pb-10 font-medium text-4xl text-white"
+                className="ps-5 pt-5 pb-5 font-medium text-4xl text-white"
                 placeholder="Título"
                 placeholderTextColor="#6B7280"
                 value={titulo}
@@ -290,7 +347,12 @@ export const Editor = (props) => {
                       }
                     `,
                 }}
-                style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}
+                style={{
+                  flex: 1,
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  paddingBottom: 20,
+                }}
               />
             </View>
           </ScrollView>
