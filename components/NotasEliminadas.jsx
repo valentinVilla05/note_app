@@ -112,13 +112,13 @@ export const NotasEliminadas = (props) => {
               {
                 rotate: rotacion.interpolate({
                   inputRange: [0, 10],
-                  outputRange: ["0deg", "180deg"],
+                  outputRange: ["0deg", "90deg"],
                 }),
               },
               {
                 translateY: trasladoY.interpolate({
                   inputRange: [0, 500, 850, 1000],
-                  outputRange: [0, 100, 300, 1000], 
+                  outputRange: [0, 100, 200, 1000], 
                 }),
               },
               { scale: scaleBorrada },
