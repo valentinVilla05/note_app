@@ -151,6 +151,7 @@ export const NotaMenu = (props) => {
       top: pageY + 17,
       left: Math.max(10, pageX - anchoMenu - 20),
     });
+    
     setMostrarMenu(true);
   };
 

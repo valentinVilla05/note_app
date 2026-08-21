@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import {
   View,
   Text,
@@ -29,9 +30,10 @@ const anchoMenu = Dimensions.get("window").width * 0.6;
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
+  const [migracionLista, setMigracionLista] = useState(false);
 
   useEffect(() => {
-    migrateFromAsyncStorage();
+    migrateFromAsyncStorage().finally(() => setMigracionLista(true));
   }, []);
 
   const animacionX = useRef(new Animated.Value(-anchoMenu)).current;
@@ -55,6 +57,14 @@ export default function Layout() {
       setMostrarMenu(false);
     });
   };
+
+  if (!migracionLista) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#181818" }}>
+        <StatusBar style="light" />
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1">

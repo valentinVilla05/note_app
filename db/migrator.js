@@ -9,10 +9,11 @@ const TRASH_KEY = "papelera";
 
 export async function migrateFromAsyncStorage() {
   try {
+    await runMigrations();
+
     const flag = await AsyncStorage.getItem(MIGRATION_FLAG);
 
     if (flag) return;
-    await runMigrations();
 
     const notasRaw = await AsyncStorage.getItem(NOTES_KEY);
     const papeleraRaw = await AsyncStorage.getItem(TRASH_KEY);

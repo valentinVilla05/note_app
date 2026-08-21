@@ -210,14 +210,14 @@ export async function deleteOldDeleted(maxTimeMs) {
   return result.changes;
 }
 
-export async function createFolder(folder) {
+export async function createFolder(folderName, folderColor) {
   const db = await getDatabase();
   const idGenerado = idGenerator();
 
   const newFolder = {
     id: idGenerado,
-    name: folder.name,
-    color: folder.color,
+    name: folderName,
+    color: folderColor,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };

@@ -1,15 +1,10 @@
-* Compartir notas
 * Seleccionar varias notas
-* Adjuntar imagenes, audios
-* Sonidos
 
 * Gestor de contraseñas
 
-* Refactorizar
 
 * Picker -> Ventana de seleccion
 
-* Animaciones
 * Personalizacion
 
 Futuro: 

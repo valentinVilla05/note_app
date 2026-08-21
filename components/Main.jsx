@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Pressable } from "react-native";
+import { StyleSheet, View, Pressable, Text, ScrollView } from "react-native";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -9,6 +9,7 @@ import { router } from "expo-router";
 import { Anadir } from "./Icons";
 import { Screen } from "./Screen";
 import { createNote } from "../db/notesRepository";
+import { Carpetas } from "./Carpetas";
 
 export function Main() {
   const insets = useSafeAreaInsets();
@@ -32,10 +33,13 @@ export function Main() {
             paddingBottom: insets.bottom,
           }}
         >
-          <View style={{ flex: 1 }}>
-            <Notas
-            />
+          <View style={{ flex: 0.4, overflow: "hidden" }}>
+            <Carpetas />
           </View>
+          <View style={{ flex: 0.6 }}>
+            <Notas />
+          </View>
+
           <View style={styles.botonAnadir}>
             <Pressable
               onPress={crearNota}

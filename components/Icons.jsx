@@ -169,3 +169,11 @@ export const Ocultar = (props) => {
 export const Mostrar = (props) => {
   return <AntDesign name="eye" size={24} color="black" {...props} />;
 };
+
+export const AnadirCarpeta = (props) => {
+  return <AntDesign name="folder-add" size={24} color="black" {...props} />;
+};
+
+export const Carpeta = (props) => {
+  return <AntDesign name="folder" size={24} color="black" {...props} />;
+};

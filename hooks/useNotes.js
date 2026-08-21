@@ -5,8 +5,10 @@ import {
   getActiveNotes,
   getArchivedNotes,
   getDeletedNotes,
+  getFolders,
   getHiddenNotes,
   getNoteById,
+  getNotesByFolder,
 } from "../db/notesRepository";
 
 export function useActiveNotes() {
@@ -69,4 +71,28 @@ export function useNote(id) {
   useFocusEffect(cargarNota);
 
   return [nota, cargarNota];
+}
+
+export function useFolders() {
+  const [carpetas, setCarpetas] = useState([]);
+
+  const cargarCarpetas = useCallback(() => {
+    getFolders().then(setCarpetas);
+  }, []);
+
+  useFocusEffect(cargarCarpetas);
+
+  return [carpetas, cargarCarpetas]
+}
+
+export function useNotesFromFolder(id) {
+  const [notasCarpeta, setNotasCarpeta] = useState([]);
+
+  const cargarNotasCarpeta = useCallback(() => {
+    getNotesByFolder(id).then(setNotasCarpeta);
+  }, [id]);
+
+  useFocusEffect(cargarNotasCarpeta);
+
+  return [notasCarpeta, cargarNotasCarpeta];
 }
