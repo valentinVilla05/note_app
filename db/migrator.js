@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDatabase } from "./connection";
 import { runMigrations } from "./migrations";
-import { toDb } from "./notesRepository";
+import { toDbNote } from "./notesRepository";
 
 const MIGRATION_FLAG = "@migrated_to_sqlite_v1";
 const NOTES_KEY = "notas";
@@ -10,9 +10,8 @@ const TRASH_KEY = "papelera";
 export async function migrateFromAsyncStorage() {
   try {
     const flag = await AsyncStorage.getItem(MIGRATION_FLAG);
-    
-    if (flag) return;
 
+    if (flag) return;
     await runMigrations();
 
     const notasRaw = await AsyncStorage.getItem(NOTES_KEY);
@@ -34,7 +33,7 @@ export async function migrateFromAsyncStorage() {
     const db = await getDatabase();
     await db.withTransactionAsync(async () => {
       for (const nota of todasLasNotas) {
-        const dbNota = toDb(nota);
+        const dbNota = toDbNote(nota);
         const cols = Object.keys(dbNota);
         const vals = Object.values(dbNota);
         const placeholders = cols.map(() => "?").join(", ");

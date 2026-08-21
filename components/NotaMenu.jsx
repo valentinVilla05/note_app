@@ -19,7 +19,7 @@ import {
   Opciones,
   PapeleraIcon,
 } from "./Icons";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   coloresFondo,
   coloresToolBar as coloresTitulo,
@@ -29,6 +29,9 @@ import {
 import { softDeleteNote, updateNote } from "../db/notesRepository";
 import { secuenciaTrasladoY } from "../data/animations";
 import * as Haptics from "expo-haptics";
+import { useAudioPlayer } from "expo-audio";
+
+const deleteAudio = require("../sfx/delete.mp3");
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -73,21 +76,29 @@ export const NotaMenu = (props) => {
   const opacidad = useRef(new Animated.Value(1)).current;
   const escalaFinal = useRef(Animated.multiply(scaleAnim, escala)).current;
 
+  const player = useAudioPlayer(deleteAudio);
+
   const animacionEliminar = (id) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+    player.seekTo(0);
+    player.play();
+    
+    Animated.delay(100);
 
     Animated.parallel([
       Animated.timing(escala, {
         toValue: 0.1,
-        duration: 350,
+        duration: 400,
         useNativeDriver: true,
       }),
       Animated.timing(opacidad, {
         toValue: 0,
-        duration: 350,
+        duration: 400,
         useNativeDriver: true,
       }),
-    ]).start(() => eliminarNota(id));
+    ]).start(() => {
+      eliminarNota(id);
+    });
   };
 
   const rotacionCandado = useRef(new Animated.Value(0)).current;
@@ -277,7 +288,7 @@ export const NotaMenu = (props) => {
                 >
                   {props.hidden == true ? (
                     <View className="flex-1 justify-center items-center">
-                    <Ocultar />
+                      <Ocultar />
                     </View>
                   ) : (
                     <Text

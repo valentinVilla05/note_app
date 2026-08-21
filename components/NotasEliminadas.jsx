@@ -16,6 +16,9 @@ import {
 import { permanentDelete, restoreNote } from "../db/notesRepository";
 import * as Haptics from "expo-haptics";
 import { use } from "react";
+import { useAudioPlayer } from "expo-audio";
+
+const deletePermanentAudio = require("../sfx/deletePermanent.mp3");
 
 export const NotasEliminadas = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
@@ -45,6 +48,8 @@ export const NotasEliminadas = (props) => {
       alert("Error al restaurar la nota");
     }
   };
+
+  const player = useAudioPlayer(deletePermanentAudio);
 
   const eliminarPermanentemente = async (id) => {
     try {
@@ -81,6 +86,8 @@ export const NotasEliminadas = (props) => {
 
   const animacionEliminadoPermanente = (id) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+    player.seekTo(0);
+    player.play();
 
     Animated.parallel([
       Animated.timing(rotacion, {
@@ -90,12 +97,12 @@ export const NotasEliminadas = (props) => {
       }),
       Animated.timing(trasladoY, {
         toValue: 1000,
-        duration: 1500,
+        duration: 1000,
         useNativeDriver: true,
       }),
       Animated.timing(opacidad, {
         toValue: 0,
-        duration: 1250,
+        duration: 1000,
         useNativeDriver: true,
       }),
     ]).start(() => eliminarPermanentemente(id));
@@ -117,8 +124,8 @@ export const NotasEliminadas = (props) => {
               },
               {
                 translateY: trasladoY.interpolate({
-                  inputRange: [0, 500, 850, 1000],
-                  outputRange: [0, 100, 200, 1000], 
+                  inputRange: [0, 1000],
+                  outputRange: [0, 1000],
                 }),
               },
               { scale: scaleBorrada },
