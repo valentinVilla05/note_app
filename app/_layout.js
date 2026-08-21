@@ -11,7 +11,7 @@ import { Main } from "../components/Main";
 import {
   Ajustes,
   Archivado,
-  Privado,
+  Ocultar,
   Contrasena,
   Menu,
   Notas,
@@ -134,7 +134,7 @@ export default function Layout() {
                 className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
                 onPress={() => setMostrarMenu(false)}
               >
-                <Privado
+                <Ocultar
                   color={"white"}
                   size={22}
                   className="me-3"

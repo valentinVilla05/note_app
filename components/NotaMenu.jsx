@@ -10,9 +10,12 @@ import { Link } from "expo-router";
 import {
   Archivado,
   Compartir,
+  Contrasena,
   FavoritoDesmarcado,
   FavoritoMarcado,
   Fijar,
+  Mostrar,
+  Ocultar,
   Opciones,
   PapeleraIcon,
 } from "./Icons";
@@ -66,27 +69,65 @@ export const NotaMenu = (props) => {
     );
   };
 
-  const scaleBorrada = useRef(new Animated.Value(1)).current;
-  const opacityAnim = useRef(new Animated.Value(1)).current;
-  const escalaFinal = useRef(
-    Animated.multiply(scaleAnim, scaleBorrada),
-  ).current;
+  const escala = useRef(new Animated.Value(1)).current;
+  const opacidad = useRef(new Animated.Value(1)).current;
+  const escalaFinal = useRef(Animated.multiply(scaleAnim, escala)).current;
 
   const animacionEliminar = (id) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
 
     Animated.parallel([
-      Animated.timing(scaleBorrada, {
+      Animated.timing(escala, {
         toValue: 0.1,
         duration: 350,
         useNativeDriver: true,
       }),
-      Animated.timing(opacityAnim, {
+      Animated.timing(opacidad, {
         toValue: 0,
         duration: 350,
         useNativeDriver: true,
       }),
     ]).start(() => eliminarNota(id));
+  };
+
+  const rotacionCandado = useRef(new Animated.Value(0)).current;
+  const opacidadCandado = useRef(new Animated.Value(0)).current;
+
+  const animacionOcultar = (id) => {
+    Animated.sequence([
+      Animated.parallel([
+        Animated.timing(opacidadCandado, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotacionCandado, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.delay(200),
+      Animated.parallel([
+        Animated.timing(escala, {
+          toValue: 0.7,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacidad, {
+          toValue: 0,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start(() => {
+      Animated.timing(opacidadCandado, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+      ocultarNota(id);
+    });
   };
 
   const abrirMenu = (event) => {
@@ -106,7 +147,6 @@ export const NotaMenu = (props) => {
     try {
       await softDeleteNote(id);
       props.onRefresh?.();
-      
     } catch (e) {
       alert("Error al eliminar la nota");
     }
@@ -139,6 +179,15 @@ export const NotaMenu = (props) => {
     }
   };
 
+  const ocultarNota = async (id) => {
+    try {
+      await updateNote(id, { hidden: !props.hidden });
+      props.onRefresh?.();
+    } catch (e) {
+      alert("Error al ocultar o mostrar la nota");
+    }
+  };
+
   const textoPlano = quitarHTML(props.content);
 
   return (
@@ -162,60 +211,110 @@ export const NotaMenu = (props) => {
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           className="w-[47%] self-startModal m-[7px]"
+          style={{ position: "relative" }}
         >
           <Animated.View
-            className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden"
             style={{
-              opacity: opacityAnim,
+              width: "100%",
               transform: [
-                { scale: escalaFinal },
+                { scale: scaleAnim },
                 { translateY: animacionTrasladoY },
               ],
               borderWidth: props.favourite ? 2 : 0,
               borderColor: props.favourite ? "#D4AF37" : "transparent",
             }}
+            className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden"
           >
-            <View
-              className="flex-row items-center justify-between bg-[#373737] rounded-t-[10px] p-[5px]"
+            <Animated.View
               style={{
-                backgroundColor:
-                  colorTheme == "black" ? "#373737" : coloresTitulo[colorTheme],
-                color: colorTheme === "black" ? "#FFFFFF" : "#000000",
+                width: "100%",
+                flex: 1,
+                opacity: opacidad,
+                transform: [{ scale: escala }],
               }}
             >
-              <View className="flex-row items-center flex-1">
-                {props.pinned ? (
-                  <Fijar color="white" size={15} className="me-2" />
-                ) : null}
-                <Text
-                  className="text-left text-xl text-white flex-1"
-                  numberOfLines={1}
-                >
-                  {props.title}
-                </Text>
-              </View>
-              <Pressable hitSlop={8} onPress={abrirMenu}>
-                <Opciones />
-              </Pressable>
-            </View>
-            <View
-              className="flex-1"
-              style={{
-                backgroundColor:
-                  colorTheme == "black" ? "#374151" : coloresFondo[colorTheme],
-              }}
-            >
-              <Text
-                className="p-[5px] text-sm"
+              <Animated.View
                 style={{
-                  color: colorTheme === "black" ? "#CCCCCC" : "#000000",
+                  width: "100%",
+                  flex: 1,
+                  opacity: opacidad,
+                  transform: [{ scale: escala }],
                 }}
               >
-                {textoPlano.length >= 100
-                  ? textoPlano.slice(0, 100).concat("...")
-                  : textoPlano}
-              </Text>
-            </View>
+                <View
+                  className="flex-row items-center justify-between bg-[#373737] rounded-t-[10px] p-[5px]"
+                  style={{
+                    backgroundColor:
+                      colorTheme == "black"
+                        ? "#373737"
+                        : coloresTitulo[colorTheme],
+                    color: colorTheme === "black" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  <View className="flex-row items-center flex-1">
+                    {props.pinned ? (
+                      <Fijar color="white" size={15} className="me-2" />
+                    ) : null}
+                    <Text
+                      className="text-left text-xl text-white flex-1"
+                      numberOfLines={1}
+                    >
+                      {props.title}
+                    </Text>
+                  </View>
+                  <Pressable hitSlop={8} onPress={abrirMenu}>
+                    <Opciones />
+                  </Pressable>
+                </View>
+                <View
+                  className="flex-1"
+                  style={{
+                    backgroundColor:
+                      colorTheme == "black"
+                        ? "#374151"
+                        : coloresFondo[colorTheme],
+                  }}
+                >
+                  {props.hidden == true ? (
+                    <View className="flex-1 justify-center items-center">
+                    <Ocultar />
+                    </View>
+                  ) : (
+                    <Text
+                      className="p-[5px] text-sm"
+                      style={{
+                        color: colorTheme === "black" ? "#CCCCCC" : "#000000",
+                      }}
+                    >
+                      {textoPlano.length >= 100
+                        ? textoPlano.slice(0, 100).concat("...")
+                        : textoPlano}
+                    </Text>
+                  )}
+                </View>
+              </Animated.View>
+            </Animated.View>
+          </Animated.View>
+
+          <Animated.View
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              opacity: opacidadCandado,
+              transform: [
+                { translateX: -15 },
+                { translateY: -15 },
+                {
+                  rotate: rotacionCandado.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ["0deg", "360deg"],
+                  }),
+                },
+              ],
+            }}
+          >
+            <Contrasena />
           </Animated.View>
         </Pressable>
       </Link>
@@ -236,43 +335,75 @@ export const NotaMenu = (props) => {
             className="bg-[#2d2d2d] w-[180px] rounded-xl p-1 border border-gray-700 shadow-2xl z-50"
             onPress={(e) => e.stopPropagation()}
           >
-            <Pressable
-              className="p-2 rounded-lg active:bg-[#3d3d3d]"
-              onPress={() => {
-                setMostrarMenu(false);
-                compartirNota(
-                  props.id,
-                  props.title,
-                  props.content,
-                  coloresFondo[props.colorTheme],
-                );
-              }}
-            >
-              <View className="flex-row items-center">
-                <Compartir color="gray" size={21} className="me-2" />
-                <Text className="text-slate-300 text-sm">Compartir</Text>
-              </View>
-            </Pressable>
-            <Pressable
-              className="p-2 rounded-lg active:bg-[#3d3d3d]"
-              onPress={() => {
-                setMostrarMenu(false);
-                animacionArchivar(props.id);
-              }}
-            >
-              {props.archived == true ? (
+            {props.hidden == false ? (
+              <Pressable
+                className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                onPress={() => {
+                  setMostrarMenu(false);
+                  compartirNota(
+                    props.id,
+                    props.title,
+                    props.content,
+                    coloresFondo[props.colorTheme],
+                  );
+                }}
+              >
                 <View className="flex-row items-center">
-                  <Archivado color="white" size={21} className="me-2" />
-                  <Text className="text-slate-300 text-sm">Desarchivar</Text>
+                  <Compartir color="gray" size={21} className="me-2" />
+                  <Text className="text-slate-300 text-sm">Compartir</Text>
                 </View>
-              ) : (
-                <View className="flex-row items-center">
-                  <Archivado color="gray" size={21} className="me-2" />
-                  <Text className="text-slate-300 text-sm">Archivar</Text>
-                </View>
-              )}
-            </Pressable>
-            {props.archived != true && (
+              </Pressable>
+            ) : (
+              <></>
+            )}
+            {props.hidden == false ? (
+              <Pressable
+                className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                onPress={() => {
+                  setMostrarMenu(false);
+                  animacionArchivar(props.id);
+                }}
+              >
+                {props.archived == true ? (
+                  <View className="flex-row items-center">
+                    <Archivado color="white" size={21} className="me-2" />
+                    <Text className="text-slate-300 text-sm">Desarchivar</Text>
+                  </View>
+                ) : (
+                  <View className="flex-row items-center">
+                    <Archivado color="gray" size={21} className="me-2" />
+                    <Text className="text-slate-300 text-sm">Archivar</Text>
+                  </View>
+                )}
+              </Pressable>
+            ) : (
+              <></>
+            )}
+            {props.archived == false ? (
+              <Pressable
+                className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                onPress={() => {
+                  setMostrarMenu(false);
+                  animacionOcultar(props.id);
+                }}
+              >
+                {props.hidden == false ? (
+                  <View className="flex-row items-center">
+                    <Ocultar color="gray" size={21} className="me-2" />
+                    <Text className="text-slate-300 text-sm">Ocultar nota</Text>
+                  </View>
+                ) : (
+                  <View className="flex-row items-center">
+                    <Mostrar color="gray" size={21} className="me-2" />
+                    <Text className="text-slate-300 text-sm">Mostrar</Text>
+                  </View>
+                )}
+              </Pressable>
+            ) : (
+              <></>
+            )}
+
+            {props.archived != true && props.hidden == false && (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
                 onPress={() => {
@@ -297,47 +428,55 @@ export const NotaMenu = (props) => {
                 )}
               </Pressable>
             )}
-            <Pressable
-              className="p-2 rounded-lg active:bg-[#3d3d3d]"
-              onPress={() => {
-                setMostrarMenu(false);
-                marcarNota(props.id);
-              }}
-            >
-              {props.favourite == true ? (
-                <View className="flex-row items-center justify-center">
-                  <FavoritoMarcado color="white" size={20} className="me-2" />
-                  <Text className="text-slate-300 text-sm">
-                    Desmarcar de favoritos
-                  </Text>
-                </View>
-              ) : (
+            {props.hidden == false && props.archived == false ? (
+              <Pressable
+                className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                onPress={() => {
+                  setMostrarMenu(false);
+                  marcarNota(props.id);
+                }}
+              >
+                {props.favourite == true ? (
+                  <View className="flex-row items-center justify-center">
+                    <FavoritoMarcado color="white" size={20} className="me-2" />
+                    <Text className="text-slate-300 text-sm">
+                      Desmarcar de favoritos
+                    </Text>
+                  </View>
+                ) : (
+                  <View className="flex-row items-center">
+                    <FavoritoDesmarcado
+                      color="white"
+                      size={18}
+                      className="me-2"
+                    />
+                    <Text className="text-slate-300 text-sm">
+                      Marcar en favoritos
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+            ) : (
+              <></>
+            )}
+            {props.hidden == false ? (
+              <Pressable
+                className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                onPress={() => {
+                  setMostrarMenu(false);
+                  animacionEliminar(props.id);
+                }}
+              >
                 <View className="flex-row items-center">
-                  <FavoritoDesmarcado
-                    color="white"
-                    size={18}
-                    className="me-2"
-                  />
-                  <Text className="text-slate-300 text-sm">
-                    Marcar en favoritos
+                  <PapeleraIcon color="white" size={20} className="me-2" />
+                  <Text className="text-red-400 font-medium text-sm">
+                    Eliminar nota
                   </Text>
                 </View>
-              )}
-            </Pressable>
-            <Pressable
-              className="p-2 rounded-lg active:bg-[#3d3d3d]"
-              onPress={() => {
-                setMostrarMenu(false);
-                animacionEliminar(props.id);
-              }}
-            >
-              <View className="flex-row items-center">
-                <PapeleraIcon color="white" size={20} className="me-2" />
-                <Text className="text-red-400 font-medium text-sm">
-                  Eliminar nota
-                </Text>
-              </View>
-            </Pressable>
+              </Pressable>
+            ) : (
+              <></>
+            )}
           </Pressable>
         </Pressable>
       </Modal>

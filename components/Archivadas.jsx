@@ -11,7 +11,7 @@ import { Anadir } from "./Icons";
 export const Archivadas = () => {
   const opacity = useRef(new Animated.Value(0)).current;
 
-  const [notasArchivadas, refreshArchivadas] = useArchivedNotes();
+  const [notasArchivadas, setNotasArchivadas] = useArchivedNotes();
 
   useEffect(() => {
     Animated.timing(opacity, {
@@ -52,7 +52,8 @@ export const Archivadas = () => {
                   pinned={item.pinned}
                   colorTheme={item.colorTheme}
                   archived={item.archived}
-                  onRefresh={refreshArchivadas}
+                  hidden={item.hidden}
+                  onRefresh={setNotasArchivadas}
                 ></NotaMenu>
               )}
             ></FlatList>
