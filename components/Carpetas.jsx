@@ -10,18 +10,32 @@ import {
   Keyboard,
 } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import { Anadir, AnadirCarpeta, Carpeta, Circulo } from "./Icons";
+import {
+  Anadir,
+  AnadirCarpeta,
+  Carpeta,
+  Circulo,
+  Escribir,
+  Opciones,
+  PapeleraIcon,
+} from "./Icons";
 import { Link } from "expo-router";
 import { useFolders } from "../hooks/useNotes";
 import { ContenidoCarpeta } from "./ContenidoCarpeta";
-import { createFolder } from "../db/notesRepository";
+import { createFolder, updateFolder } from "../db/notesRepository";
 import { Modal } from "react-native";
 import { TextInput } from "react-native";
 import { coloresFondo, coloresToolBar } from "../data/utils";
 import { KeyboardAvoidingView } from "react-native";
 
 export function Carpetas() {
-  const [mostrarMenu, setMostrarMenu] = useState(false);
+  const [mostrarMenuCrear, setMostrarMenuCrear] = useState(false);
+
+  const [mostrarMenuOpciones, setMostrarMenuOpciones] = useState(false);
+  const [posicion, setPosicion] = useState({ top: 0, left: 0 });
+
+  const [mostrarMenuEditar, setMostrarMenuEditar] = useState(false);
+
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -35,13 +49,36 @@ export function Carpetas() {
 
   const [carpetas, setCarpetas] = useFolders();
 
-  const abrirModal = (event) => {
+  const abrirModalCrear = (event) => {
     event.stopPropagation();
 
     const { pageX, pageY } = event.nativeEvent;
     const anchoMenu = 200;
 
-    setMostrarMenu(true);
+    setMostrarMenuCrear(true);
+  };
+
+  const abrirModalEditar = (event) => {
+    event.stopPropagation();
+
+    const { pageX, pageY } = event.nativeEvent;
+    const anchoMenu = 200;
+
+    setMostrarMenuEditar(true);
+  };
+
+  const abrirModalOpciones = (event) => {
+    event.stopPropagation();
+
+    const { pageX, pageY } = event.nativeEvent;
+    const anchoMenu = 140;
+
+    setPosicion({
+      top: pageY + 17,
+      left: Math.max(10, pageX - anchoMenu - 20),
+    });
+
+    setMostrarMenuOpciones(true);
   };
 
   const [nombreCarpeta, setNombreCarpeta] = useState("");
@@ -53,19 +90,38 @@ export function Carpetas() {
       await setCarpetas();
       setNombreCarpeta("");
       setColorCarpeta("#3F4754");
-      setMostrarMenu(false);
+      setMostrarMenuCrear(false);
     } catch (e) {
       alert("Error al crear la carpeta");
     }
   };
 
+  const [idAEditar, setIdAEditar] = useState(null);
+  const [nombreNuevo, setNombreNuevo] = useState("");
+  const [colorNuevo, setColorNuevo] = useState("");
+
+  const editarCarpeta = async (id) => {
+    try {
+        const carpetaEditada = await updateFolder(id, {name: nombreNuevo, color: colorNuevo});
+        await setCarpetas()
+        setNombreNuevo("");
+        setColorNuevo("");
+        setMostrarMenuEditar(false)
+    }catch (e){
+        alert("Error al editar la carpeta")
+    }
+  }
+
   return (
     <>
       <Animated.View style={{ flex: 1, opacity, overflow: "hidden" }}>
-        <View className="flex-1 pb-3 bg-[#101010]" style={{ overflow: "hidden" }}>
+        <View
+          className="flex-1 pb-3 bg-[#101010]"
+          style={{ overflow: "hidden" }}
+        >
           <Pressable
             hitSlop={7}
-            onPress={abrirModal}
+            onPress={abrirModalCrear}
             className="flex-row items-center mt-3 rounded-lg ms-4 me-4 min-h-[50px] min-w-[50px] bg-zinc-800"
           >
             <AnadirCarpeta className="me-3 ms-4" color={"white"} size={20} />
@@ -88,23 +144,33 @@ export function Carpetas() {
                 }}
               >
                 <Pressable
-                  className="flex-row items-center mt-3 rounded-lg ms-4 me-4 min-h-[50px] min-w-[50px]"
+                  className="flex-row items-center justify-between mt-3 rounded-lg ms-4 me-4 min-h-[50px] min-w-[50px]"
                   style={{
                     backgroundColor: carpetaItem.color,
                   }}
                 >
-                  <Carpeta
-                    className="me-3 ms-4"
-                    size={20}
-                    color={"white"}
-                  />
-                  <Text
-                    style={{
-                      color: carpetaItem.color == "black" ? "white" : "black",
+                  <View className="flex-row items-center ">
+                    <Carpeta className="me-3 ms-4" size={20} color={"white"} />
+                    <Text
+                      style={{
+                        color: carpetaItem.color == "black" ? "white" : "black",
+                      }}
+                    >
+                      {carpetaItem.name}
+                    </Text>
+                  </View>
+                  <Pressable
+                    hitSlop={7}
+                    className="me-3"
+                    onPress={(event) => {
+                      setIdAEditar(carpetaItem.id)
+                      setNombreNuevo(carpetaItem.name)
+                      setColorNuevo(carpetaItem.color)
+                      abrirModalOpciones(event);
                     }}
                   >
-                    {carpetaItem.name}
-                  </Text>
+                    <Opciones color={"white"} />
+                  </Pressable>
                 </Pressable>
               </Link>
             )}
@@ -112,17 +178,19 @@ export function Carpetas() {
         </View>
       </Animated.View>
 
+      {/* Modal de creacion de carpeta */}
       <Modal
-        visible={mostrarMenu}
+        visible={mostrarMenuCrear}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => setMostrarMenu(false)}
+        setMostrarMenuCrear
+        onRequestClose={() => setMostrarMenuCrear(false)}
       >
         <Pressable
           className="flex-1"
           onPress={() => {
             Keyboard.dismiss();
-            setMostrarMenu(false);
+            setMostrarMenuCrear(false);
           }}
         >
           <KeyboardAvoidingView
@@ -187,6 +255,121 @@ export function Carpetas() {
               </Pressable>
             </View>
           </KeyboardAvoidingView>
+        </Pressable>
+      </Modal>
+
+      {/* Modal para editar carpeta */}
+      <Modal
+        visible={mostrarMenuEditar}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setMostrarMenuEditar(false)}
+      >
+        <Pressable
+          className="flex-1"
+          onPress={() => {
+            Keyboard.dismiss();
+            setMostrarMenuEditar(false);
+          }}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+          >
+            <View style={{ flex: 1, justifyContent: "flex-end" }}>
+              <Pressable
+                style={{ width: "100%", padding: 16 }}
+                className="bg-[#2d2d2d] rounded-t-2xl"
+                onPress={(e) => e.stopPropagation()}
+              >
+                <View className="flex-col">
+                  <View className="m-4 flex-col">
+                    <Text className="text-white">
+                      Escribe el nombre de la carpeta:
+                    </Text>
+                    <TextInput
+                      className="bg-[#272727] mt-3 rounded-md"
+                      placeholder="Listas..."
+                      value={nombreNuevo}
+                      onChangeText={setNombreNuevo}
+                      style={{
+                        color: "white",
+                      }}
+                    />
+                  </View>
+                  <View className="m-4 flex-col">
+                    <Text className="text-white">
+                      Escoge el color de la carpeta:
+                    </Text>
+                    <View className="flex-row mt-3 justify-center ">
+                      {Object.values(coloresFondo).map((color) => {
+                        return (
+                          <Pressable
+                            className="h-14 w-16 items-center justify-center rounded-md"
+                            key={color}
+                            onPress={() => {
+                              setColorNuevo(color);
+                            }}
+                            style={{
+                              backgroundColor:
+                                color == colorNuevo ? "#4F4F4F" : "#2d2d2d",
+                            }}
+                          >
+                            <Circulo color={color} size={35} />
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  </View>
+                  <View>
+                    <Pressable
+                      className="h-10 m-3 bg-[#dc9a60] active:bg-[#c9772f] rounded-md justify-center items-center"
+                      onPress={() => {
+                        editarCarpeta(idAEditar);
+                      }}
+                      disabled={nombreNuevo.length <= 0}
+                    >
+                      <Text className="text-white">Editar carpeta</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </Pressable>
+            </View>
+          </KeyboardAvoidingView>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={mostrarMenuOpciones}
+        transparent={true}
+        animationType="none"
+        onRequestClose={() => setMostrarMenuOpciones(false)}
+      >
+        <Pressable
+          className="flex-1"
+          onPress={() => setMostrarMenuOpciones(false)}
+        >
+          <Pressable
+            style={{
+              position: "absolute",
+              top: posicion.top,
+              left: posicion.left,
+            }}
+            className="bg-[#2d2d2d] w-[180px] rounded-xl p-1 border border-gray-700 shadow-2xl z-50"
+            onPress={(e) => e.stopPropagation()}
+          >
+            <Pressable className="p-2 rounded-lg active:bg-[#3d3d3d] flex-row items-center" onPress={() => {
+                setMostrarMenuOpciones(false);
+                setMostrarMenuEditar(true);
+            }}>
+              <Escribir color={"white"} size={20} className="me-2" />
+              <Text className="text-white">Editar carpeta</Text>
+            </Pressable>
+            <Pressable className="p-2 rounded-lg active:bg-[#3d3d3d] flex-row items-center">
+              <PapeleraIcon color={"white"} size={20} className="me-2" />
+              <Text className="text-red-500">Eliminar carpeta</Text>
+            </Pressable>
+          </Pressable>
         </Pressable>
       </Modal>
     </>
