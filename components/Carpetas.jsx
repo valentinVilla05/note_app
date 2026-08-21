@@ -22,7 +22,7 @@ import {
 import { Link } from "expo-router";
 import { useFolders } from "../hooks/useNotes";
 import { ContenidoCarpeta } from "./ContenidoCarpeta";
-import { createFolder, updateFolder } from "../db/notesRepository";
+import { createFolder, deleteFolder, updateFolder } from "../db/notesRepository";
 import { Modal } from "react-native";
 import { TextInput } from "react-native";
 import { coloresFondo, coloresToolBar } from "../data/utils";
@@ -106,9 +106,24 @@ export function Carpetas() {
         await setCarpetas()
         setNombreNuevo("");
         setColorNuevo("");
+        setIdAEditar(null);
+        setIdAEliminar(null);
         setMostrarMenuEditar(false)
     }catch (e){
         alert("Error al editar la carpeta")
+    }
+  }
+
+  const [idAEliminar, setIdAEliminar] = useState(null);
+
+  const eliminarCarpeta = async (id) => {
+    try {
+        const carpetaAEliminar = await deleteFolder(id);
+        await setCarpetas();
+        setIdAEliminar(null);
+
+    } catch(e){
+        alert("Error al eliminar la carpeta")
     }
   }
 
@@ -164,6 +179,7 @@ export function Carpetas() {
                     className="me-3"
                     onPress={(event) => {
                       setIdAEditar(carpetaItem.id)
+                      setIdAEliminar(carpetaItem.id)
                       setNombreNuevo(carpetaItem.name)
                       setColorNuevo(carpetaItem.color)
                       abrirModalOpciones(event);
@@ -365,7 +381,10 @@ export function Carpetas() {
               <Escribir color={"white"} size={20} className="me-2" />
               <Text className="text-white">Editar carpeta</Text>
             </Pressable>
-            <Pressable className="p-2 rounded-lg active:bg-[#3d3d3d] flex-row items-center">
+            <Pressable className="p-2 rounded-lg active:bg-[#3d3d3d] flex-row items-center" onPress={() => {
+                eliminarCarpeta(idAEliminar);
+                setMostrarMenuOpciones(false);
+            }}>
               <PapeleraIcon color={"white"} size={20} className="me-2" />
               <Text className="text-red-500">Eliminar carpeta</Text>
             </Pressable>
