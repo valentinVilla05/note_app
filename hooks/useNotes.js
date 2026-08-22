@@ -9,6 +9,7 @@ import {
   getHiddenNotes,
   getNoteById,
   getNotesByFolder,
+  getNotesWhitoutFolder,
 } from "../db/notesRepository";
 
 export function useActiveNotes() {
@@ -95,4 +96,16 @@ export function useNotesFromFolder(id) {
   useFocusEffect(cargarNotasCarpeta);
 
   return [notasCarpeta, cargarNotasCarpeta];
+}
+
+export function useNotesWithoutfolder() {
+  const [notasLibres, setNotasLibres] = useState([]);
+
+  const cargarNotasSinFolder = useCallback(() =>  {
+    getNotesWhitoutFolder().then(setNotasLibres);
+  }, []);
+
+  useFocusEffect(cargarNotasSinFolder);
+
+  return [notasLibres, cargarNotasSinFolder];
 }

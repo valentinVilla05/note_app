@@ -42,7 +42,6 @@ export function Carpetas() {
     Animated.timing(opacity, {
       toValue: 1,
       duration: 350,
-      delay: 350,
       useNativeDriver: true,
     }).start();
   }, [opacity]);
@@ -161,14 +160,17 @@ export function Carpetas() {
                 <Pressable
                   className="flex-row items-center justify-between mt-3 rounded-lg ms-4 me-4 min-h-[50px] min-w-[50px]"
                   style={{
-                    backgroundColor: carpetaItem.color,
+                    backgroundColor: coloresFondo[carpetaItem.color],
                   }}
                 >
                   <View className="flex-row items-center ">
                     <Carpeta className="me-3 ms-4" size={20} color={"white"} />
                     <Text
                       style={{
-                        color: carpetaItem.color == "black" ? "white" : "black",
+                        color:
+                          carpetaItem.color == "black"
+                            ? "white"
+                            : "black",
                       }}
                     >
                       {carpetaItem.name}
@@ -178,14 +180,18 @@ export function Carpetas() {
                     hitSlop={7}
                     className="me-3"
                     onPress={(event) => {
-                      setIdAEditar(carpetaItem.id)
-                      setIdAEliminar(carpetaItem.id)
-                      setNombreNuevo(carpetaItem.name)
-                      setColorNuevo(carpetaItem.color)
+                      setIdAEditar(carpetaItem.id);
+                      setIdAEliminar(carpetaItem.id);
+                      setNombreNuevo(carpetaItem.name);
+                      setColorNuevo(carpetaItem.color);
                       abrirModalOpciones(event);
                     }}
                   >
-                    <Opciones color={"white"} />
+                    {carpetaItem.color == "white" ? (
+                      <Opciones color={"gray"} />
+                    ) : (
+                      <Opciones color={"white"} />
+                    )}
                   </Pressable>
                 </Pressable>
               </Link>
@@ -239,7 +245,7 @@ export function Carpetas() {
                       Escoge el color de la carpeta:
                     </Text>
                     <View className="flex-row mt-3 justify-center ">
-                      {Object.values(coloresFondo).map((color) => {
+                      {Object.keys(coloresFondo).map((color) => {
                         return (
                           <Pressable
                             className="h-14 w-16 items-center justify-center rounded-md"
@@ -252,7 +258,7 @@ export function Carpetas() {
                                 color == colorCarpeta ? "#4F4F4F" : "#2d2d2d",
                             }}
                           >
-                            <Circulo color={color} size={35} />
+                            <Circulo color={coloresFondo[color]} size={35} />
                           </Pressable>
                         );
                       })}
@@ -318,7 +324,7 @@ export function Carpetas() {
                       Escoge el color de la carpeta:
                     </Text>
                     <View className="flex-row mt-3 justify-center ">
-                      {Object.values(coloresFondo).map((color) => {
+                      {Object.keys(coloresFondo).map((color) => {
                         return (
                           <Pressable
                             className="h-14 w-16 items-center justify-center rounded-md"
@@ -331,7 +337,7 @@ export function Carpetas() {
                                 color == colorNuevo ? "#4F4F4F" : "#2d2d2d",
                             }}
                           >
-                            <Circulo color={color} size={35} />
+                            <Circulo color={coloresFondo[color]} size={35} />
                           </Pressable>
                         );
                       })}
@@ -374,17 +380,23 @@ export function Carpetas() {
             className="bg-[#2d2d2d] w-[180px] rounded-xl p-1 border border-gray-700 shadow-2xl z-50"
             onPress={(e) => e.stopPropagation()}
           >
-            <Pressable className="p-2 rounded-lg active:bg-[#3d3d3d] flex-row items-center" onPress={() => {
+            <Pressable
+              className="p-2 rounded-lg active:bg-[#3d3d3d] flex-row items-center"
+              onPress={() => {
                 setMostrarMenuOpciones(false);
                 setMostrarMenuEditar(true);
-            }}>
+              }}
+            >
               <Escribir color={"white"} size={20} className="me-2" />
               <Text className="text-white">Editar carpeta</Text>
             </Pressable>
-            <Pressable className="p-2 rounded-lg active:bg-[#3d3d3d] flex-row items-center" onPress={() => {
+            <Pressable
+              className="p-2 rounded-lg active:bg-[#3d3d3d] flex-row items-center"
+              onPress={() => {
                 eliminarCarpeta(idAEliminar);
                 setMostrarMenuOpciones(false);
-            }}>
+              }}
+            >
               <PapeleraIcon color={"white"} size={20} className="me-2" />
               <Text className="text-red-500">Eliminar carpeta</Text>
             </Pressable>

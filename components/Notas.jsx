@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { NotaMenu } from "./NotaMenu";
 import { Anadir } from "./Icons";
 import { Link } from "expo-router";
-import { useActiveNotes } from "../hooks/useNotes";
+import { useActiveNotes, useNotesWithoutfolder } from "../hooks/useNotes";
 
 export function Notas({
   index,
@@ -20,7 +20,7 @@ export function Notas({
     }).start();
   }, [opacity, index]);
 
-  const [notas, refreshNotas] = useActiveNotes();
+  const [notas, refreshNotas] = useNotesWithoutfolder();
   return (
     <Animated.View style={{ flex: 1, opacity }}>
       {notas.length === 0 ? (
@@ -42,6 +42,7 @@ export function Notas({
               id={item.id}
               title={item.title}
               content={item.content}
+              folderId={item.folderId}
               favourite={item.favourite}
               pinned={item.pinned}
               colorTheme={item.colorTheme}

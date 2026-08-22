@@ -211,6 +211,7 @@ export const NotaMenu = (props) => {
             id: String(props.id),
             title: props.title,
             content: props.content,
+            folderId: props.folderId,
             favourite: props.favourite,
             pinned: props.pinned,
             colorTheme: props.colorTheme,
@@ -368,7 +369,7 @@ export const NotaMenu = (props) => {
             ) : (
               <></>
             )}
-            {props.hidden == false ? (
+            {props.hidden == false && props.folderId == null? (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
                 onPress={() => {
@@ -391,7 +392,7 @@ export const NotaMenu = (props) => {
             ) : (
               <></>
             )}
-            {props.archived == false ? (
+            {(props.archived == false || props.folderId != null) ? (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
                 onPress={() => {
@@ -415,7 +416,7 @@ export const NotaMenu = (props) => {
               <></>
             )}
 
-            {props.archived != true && props.hidden == false && (
+            {(props.archived != true || props.folderId != null) && props.hidden == false && (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
                 onPress={() => {
@@ -440,7 +441,7 @@ export const NotaMenu = (props) => {
                 )}
               </Pressable>
             )}
-            {props.hidden == false && props.archived == false ? (
+            {props.hidden == false && (props.archived == false || props.folderId != null) ? (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
                 onPress={() => {

@@ -10,18 +10,10 @@ import { Anadir } from "./Icons";
 import { Screen } from "./Screen";
 import { createNote } from "../db/notesRepository";
 import { Carpetas } from "./Carpetas";
+import { BotonEscribir } from "./BotonEscribir";
 
 export function Main() {
   const insets = useSafeAreaInsets();
-
-  const crearNota = async () => {
-    try {
-      const nuevaNota = await createNote({});
-      router.push(`/${nuevaNota.id}`);
-    } catch (e) {
-      alert("Error al crear nota");
-    }
-  };
 
   return (
     <SafeAreaProvider>
@@ -40,42 +32,9 @@ export function Main() {
             <Notas />
           </View>
 
-          <View style={styles.botonAnadir}>
-            <Pressable
-              onPress={crearNota}
-              accessibilityRole="button"
-              accessibilityLabel="Escribir nota"
-              className="bg-[#e17f29] active:bg-[#cf701e] active:opacity-50"
-            >
-              {({ pressed }) => (
-                <View
-                  className="justify-center items-center"
-                  style={{
-                    opacity: pressed ? 0.5 : 1,
-                  }}
-                >
-                  <Anadir className="" color="white" />
-                </View>
-              )}
-            </Pressable>
-          </View>
+          <BotonEscribir/>
         </View>
       </Screen>
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  botonAnadir: {
-    backgroundColor: "#e17f29",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignSelf: "flex-end",
-    marginRight: 30,
-    position: "absolute",
-    bottom: 40,
-  },
-});

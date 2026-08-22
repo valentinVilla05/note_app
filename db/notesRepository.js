@@ -132,7 +132,7 @@ export async function getNoteById(id) {
   return rowConverted;
 }
 
-export async function createNote(note) {
+export async function createNote(note, folderId) {
   const db = await getDatabase();
   const idGenerado = idGenerator();
   const date = Date.now();
@@ -141,7 +141,7 @@ export async function createNote(note) {
     id: idGenerado,
     title: note.title || "",
     content: note.content || "",
-    folderId: note.folderId || null,
+    folderId: folderId || null,
     colorTheme: note.colorTheme || "black",
     pinned: note.pinned || false,
     favourite: note.favourite || false,
@@ -260,6 +260,17 @@ export async function getNotesByFolder(id) {
   const params = id === null ? [] : [id];
   const rows = await db.getAllAsync(sql, params);
   return rows.map(mapRowNote);
+}
+
+export async function getNotesWhitoutFolder() {
+  const db = await getDatabase();
+
+  const sql = `SELECT * FROM notes WHERE deleted_at IS NULL AND folder_id IS NULL AND hidden = 0 AND archived = 0 ORDER BY pinned DESC, updated_at DESC`;
+  const notes = await db.getAllAsync(sql);
+
+  const notesConverted = notes.map(mapRowNote);
+
+  return notesConverted
 }
 
 export async function updateFolder(id, campos) {
