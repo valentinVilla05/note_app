@@ -254,6 +254,11 @@ export const NotaMenu = (props) => {
         <Pressable
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
+          onLongPress={() => {
+            if (props.onNotaSeleccionada) {
+              props.onNotaSeleccionada();
+            }
+          }}
           className="w-[47%] self-startModal m-[7px]"
           style={{ position: "relative" }}
         >
@@ -264,8 +269,12 @@ export const NotaMenu = (props) => {
                 { scale: scaleAnim },
                 { translateY: animacionTrasladoY },
               ],
-              borderWidth: props.favourite ? 2 : 0,
-              borderColor: props.favourite ? "#D4AF37" : "transparent",
+              borderWidth: props.seleccionada ? 3 : props.favourite ? 2 : 0,
+              borderColor: props.seleccionada
+                ? "#3b82f6"
+                : props.favourite
+                  ? "#D4AF37"
+                  : "transparent",
             }}
             className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden"
           >
@@ -601,43 +610,41 @@ export const NotaMenu = (props) => {
                     <Cancelar size={22} color={"white"} />
                   </Pressable>
                 </View>
-                {
-                  (listaCarpetas.length == 0 ? (
-                    <View className="justify-center items-center">
-                      <Text className="text-white mt-10 mb-10">
-                        No hay carpetas a las que añadir esta nota.
-                      </Text>
-                    </View>
-                  ) : (
-                    <FlatList
-                      numColumns={1}
-                      data={listaCarpetas}
-                      keyExtractor={(carpeta) => String(carpeta.id)}
-                      renderItem={({ item, pressed }) => (
-                        <Pressable
-                          hitSlop={7}
-                          className="flex-1 flex-row items-center justify-between p-3 mb-3 rounded-lg"
+                {listaCarpetas.length == 0 ? (
+                  <View className="justify-center items-center">
+                    <Text className="text-white mt-10 mb-10">
+                      No hay carpetas a las que añadir esta nota.
+                    </Text>
+                  </View>
+                ) : (
+                  <FlatList
+                    numColumns={1}
+                    data={listaCarpetas}
+                    keyExtractor={(carpeta) => String(carpeta.id)}
+                    renderItem={({ item, pressed }) => (
+                      <Pressable
+                        hitSlop={7}
+                        className="flex-1 flex-row items-center justify-between p-3 mb-3 rounded-lg"
+                        style={{
+                          backgroundColor: pressed
+                            ? coloresFondo[item.color] || "#383838"
+                            : coloresToolBar[item.color],
+                        }}
+                        onPress={() => anadirNotaACarpeta(props.id, item.id)}
+                      >
+                        <Text
+                          className="text-white font-medium flex-1 me-2"
+                          numberOfLines={1}
                           style={{
-                            backgroundColor: pressed
-                              ? coloresFondo[item.color] || "#383838"
-                              : coloresToolBar[item.color],
+                            color: item.color == "black" ? "white" : "black",
                           }}
-                          onPress={() => anadirNotaACarpeta(props.id, item.id)}
                         >
-                          <Text
-                            className="text-white font-medium flex-1 me-2"
-                            numberOfLines={1}
-                            style={{
-                              color: item.color == "black" ? "white" : "black",
-                            }}
-                          >
-                            {item.name.length > 0 ? item.name : "Sin Titulo"}
-                          </Text>
-                        </Pressable>
-                      )}
-                    />
-                  ))
-                }
+                          {item.name.length > 0 ? item.name : "Sin Titulo"}
+                        </Text>
+                      </Pressable>
+                    )}
+                  />
+                )}
               </Pressable>
             </View>
           </KeyboardAvoidingView>

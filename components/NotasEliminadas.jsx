@@ -110,7 +110,14 @@ export const NotasEliminadas = (props) => {
 
   return (
     <>
-      <Pressable className="flex-1 min-w-[47%] self-startModal m-[7px]">
+      <Pressable
+        className="flex-1 min-w-[47%] self-startModal m-[7px]"
+        onLongPress={() => {
+          if (props.onNotaSeleccionada) {
+            props.onNotaSeleccionada();
+          }
+        }}
+      >
         <Animated.View
           className="bg-[#4a4a4a] rounded-[10px] min-h-[100px] min-w-[150px] overflow-hidden"
           style={{
@@ -130,6 +137,8 @@ export const NotasEliminadas = (props) => {
               },
               { scale: scaleBorrada },
             ],
+            borderWidth: props.seleccionada ? 3 : 0,
+            borderColor: props.seleccionada ? "#3b82f6" : "transparent",
           }}
         >
           <View
