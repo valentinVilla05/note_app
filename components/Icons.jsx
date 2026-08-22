@@ -177,3 +177,36 @@ export const AnadirCarpeta = (props) => {
 export const Carpeta = (props) => {
   return <AntDesign name="folder" size={24} color="black" {...props} />;
 };
+
+export const EditarCarpeta = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name="folder-edit"
+      size={24}
+      color="black"
+      {...props}
+    />
+  );
+};
+
+export const SacarDeCarpetaIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name="folder-arrow-left-outline"
+      size={24}
+      color="black"
+      {...props}
+    />
+  );
+};
+
+export const MeterEnCarpetaIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name="folder-arrow-right-outline"
+      size={24}
+      color="black"
+      {...props}
+    />
+  );
+};

@@ -5,19 +5,26 @@ import {
   StyleSheet,
   Modal,
   Animated,
+  Keyboard,
+  Platform,
+  KeyboardAvoidingView,
+  FlatList,
 } from "react-native";
 import { Link } from "expo-router";
 import {
   Archivado,
+  Cancelar,
   Compartir,
   Contrasena,
   FavoritoDesmarcado,
   FavoritoMarcado,
   Fijar,
+  MeterEnCarpetaIcon,
   Mostrar,
   Ocultar,
   Opciones,
   PapeleraIcon,
+  SacarDeCarpetaIcon,
 } from "./Icons";
 import { useState, useRef, useEffect } from "react";
 import {
@@ -25,16 +32,20 @@ import {
   coloresToolBar as coloresTitulo,
   quitarHTML,
   compartirNota,
+  coloresToolBar,
 } from "../data/utils";
 import { softDeleteNote, updateNote } from "../db/notesRepository";
 import { secuenciaTrasladoY } from "../data/animations";
 import * as Haptics from "expo-haptics";
 import { useAudioPlayer } from "expo-audio";
+import { useFolders } from "../hooks/useNotes";
 
 const deleteAudio = require("../sfx/delete.mp3");
 
 export const NotaMenu = (props) => {
   const [mostrarMenu, setMostrarMenu] = useState(false);
+  const [mostrarListaCarpetas, setMostrarListaCarpetas] = useState(false);
+
   const [posicion, setPosicion] = useState({ top: 0, left: 0 });
   const colorTheme = props.colorTheme;
 
@@ -82,7 +93,7 @@ export const NotaMenu = (props) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
     player.seekTo(0);
     player.play();
-    
+
     Animated.delay(100);
 
     Animated.parallel([
@@ -151,7 +162,7 @@ export const NotaMenu = (props) => {
       top: pageY + 17,
       left: Math.max(10, pageX - anchoMenu - 20),
     });
-    
+
     setMostrarMenu(true);
   };
 
@@ -201,6 +212,26 @@ export const NotaMenu = (props) => {
   };
 
   const textoPlano = quitarHTML(props.content);
+
+  const [listaCarpetas, setListaCarpetas] = useFolders();
+
+  const anadirNotaACarpeta = async (idNota, idCarpeta) => {
+    try {
+      await updateNote(idNota, { folderId: idCarpeta });
+      props.onRefresh?.();
+    } catch (e) {
+      alert("Error al añadir nota en carpeta");
+    }
+  };
+
+  const sacarDeCarpeta = async (idNota) => {
+    try {
+      await updateNote(idNota, { folderId: null });
+      props.onRefresh?.();
+    } catch (e) {
+      alert("Error al añadir nota en carpeta");
+    }
+  };
 
   return (
     <>
@@ -348,6 +379,46 @@ export const NotaMenu = (props) => {
             className="bg-[#2d2d2d] w-[180px] rounded-xl p-1 border border-gray-700 shadow-2xl z-50"
             onPress={(e) => e.stopPropagation()}
           >
+            {props.folderId == null ? (
+              <Pressable
+                className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                onPress={() => {
+                  setListaCarpetas();
+                  setMostrarMenu(false);
+                  setMostrarListaCarpetas(true);
+                }}
+              >
+                <View className="flex-row items-center">
+                  <MeterEnCarpetaIcon
+                    color="white"
+                    size={21}
+                    className="me-2"
+                  />
+                  <Text className="text-slate-300 text-sm">
+                    Añadir a una carpeta
+                  </Text>
+                </View>
+              </Pressable>
+            ) : (
+              <Pressable
+                className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                onPress={() => {
+                  setMostrarMenu(false);
+                  sacarDeCarpeta(props.id);
+                }}
+              >
+                <View className="flex-row items-center">
+                  <SacarDeCarpetaIcon
+                    color="white"
+                    size={21}
+                    className="me-2"
+                  />
+                  <Text className="text-slate-300 text-sm">
+                    Sacar de la carpeta
+                  </Text>
+                </View>
+              </Pressable>
+            )}
             {props.hidden == false ? (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
@@ -369,7 +440,7 @@ export const NotaMenu = (props) => {
             ) : (
               <></>
             )}
-            {props.hidden == false && props.folderId == null? (
+            {props.hidden == false && props.folderId == null ? (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
                 onPress={() => {
@@ -392,7 +463,7 @@ export const NotaMenu = (props) => {
             ) : (
               <></>
             )}
-            {(props.archived == false || props.folderId != null) ? (
+            {props.archived == false || props.folderId != null ? (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
                 onPress={() => {
@@ -416,32 +487,34 @@ export const NotaMenu = (props) => {
               <></>
             )}
 
-            {(props.archived != true || props.folderId != null) && props.hidden == false && (
-              <Pressable
-                className="p-2 rounded-lg active:bg-[#3d3d3d]"
-                onPress={() => {
-                  setMostrarMenu(false);
-                  fijarNota(props.id);
-                }}
-              >
-                {props.pinned == true ? (
-                  <View className="flex-row items-center">
-                    <Fijar color="white" size={21} className="me-2" />
-                    <Text className="text-slate-300 text-sm">
-                      Desfijar del inicio
-                    </Text>
-                  </View>
-                ) : (
-                  <View className="flex-row items-center">
-                    <Fijar color="gray" size={21} className="me-2" />
-                    <Text className="text-slate-300 text-sm">
-                      Fijar al inicio
-                    </Text>
-                  </View>
-                )}
-              </Pressable>
-            )}
-            {props.hidden == false && (props.archived == false || props.folderId != null) ? (
+            {(props.archived != true || props.folderId != null) &&
+              props.hidden == false && (
+                <Pressable
+                  className="p-2 rounded-lg active:bg-[#3d3d3d]"
+                  onPress={() => {
+                    setMostrarMenu(false);
+                    fijarNota(props.id);
+                  }}
+                >
+                  {props.pinned == true ? (
+                    <View className="flex-row items-center">
+                      <Fijar color="white" size={21} className="me-2" />
+                      <Text className="text-slate-300 text-sm">
+                        Desfijar del inicio
+                      </Text>
+                    </View>
+                  ) : (
+                    <View className="flex-row items-center">
+                      <Fijar color="gray" size={21} className="me-2" />
+                      <Text className="text-slate-300 text-sm">
+                        Fijar al inicio
+                      </Text>
+                    </View>
+                  )}
+                </Pressable>
+              )}
+            {props.hidden == false &&
+            (props.archived == false || props.folderId != null) ? (
               <Pressable
                 className="p-2 rounded-lg active:bg-[#3d3d3d]"
                 onPress={() => {
@@ -491,6 +564,83 @@ export const NotaMenu = (props) => {
               <></>
             )}
           </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={mostrarListaCarpetas}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setMostrarListaCarpetas(false)}
+      >
+        <Pressable
+          className="flex-1"
+          onPress={() => {
+            Keyboard.dismiss();
+            setMostrarListaCarpetas(false);
+          }}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+          >
+            <View style={{ flex: 1, justifyContent: "flex-end" }}>
+              <Pressable
+                style={{ width: "100%", padding: 16, maxHeight: "80%" }}
+                className="bg-[#2d2d2d] rounded-t-2xl"
+                onPress={(e) => e.stopPropagation()}
+              >
+                <View className=" flex-row justify-between">
+                  <Text className="text-white text-lg font-semibold mb-4">
+                    Selecciona la carpeta:
+                  </Text>
+                  <Pressable
+                    hitSlop={7}
+                    onPress={() => setMostrarListaCarpetas(false)}
+                  >
+                    <Cancelar size={22} color={"white"} />
+                  </Pressable>
+                </View>
+                {
+                  (listaCarpetas.length == 0 ? (
+                    <View className="justify-center items-center">
+                      <Text className="text-white mt-10 mb-10">
+                        No hay carpetas a las que añadir esta nota.
+                      </Text>
+                    </View>
+                  ) : (
+                    <FlatList
+                      numColumns={1}
+                      data={listaCarpetas}
+                      keyExtractor={(carpeta) => String(carpeta.id)}
+                      renderItem={({ item, pressed }) => (
+                        <Pressable
+                          hitSlop={7}
+                          className="flex-1 flex-row items-center justify-between p-3 mb-3 rounded-lg"
+                          style={{
+                            backgroundColor: pressed
+                              ? coloresFondo[item.color] || "#383838"
+                              : coloresToolBar[item.color],
+                          }}
+                          onPress={() => anadirNotaACarpeta(props.id, item.id)}
+                        >
+                          <Text
+                            className="text-white font-medium flex-1 me-2"
+                            numberOfLines={1}
+                            style={{
+                              color: item.color == "black" ? "white" : "black",
+                            }}
+                          >
+                            {item.name.length > 0 ? item.name : "Sin Titulo"}
+                          </Text>
+                        </Pressable>
+                      )}
+                    />
+                  ))
+                }
+              </Pressable>
+            </View>
+          </KeyboardAvoidingView>
         </Pressable>
       </Modal>
     </>

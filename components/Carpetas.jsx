@@ -13,8 +13,10 @@ import { useEffect, useRef, useState } from "react";
 import {
   Anadir,
   AnadirCarpeta,
+  Cancelar,
   Carpeta,
   Circulo,
+  EditarCarpeta,
   Escribir,
   Opciones,
   PapeleraIcon,
@@ -22,13 +24,17 @@ import {
 import { Link } from "expo-router";
 import { useFolders } from "../hooks/useNotes";
 import { ContenidoCarpeta } from "./ContenidoCarpeta";
-import { createFolder, deleteFolder, updateFolder } from "../db/notesRepository";
+import {
+  createFolder,
+  deleteFolder,
+  updateFolder,
+} from "../db/notesRepository";
 import { Modal } from "react-native";
 import { TextInput } from "react-native";
 import { coloresFondo, coloresToolBar } from "../data/utils";
 import { KeyboardAvoidingView } from "react-native";
 
-export function Carpetas() {
+export function Carpetas({ onFolderDeleted }) {
   const [mostrarMenuCrear, setMostrarMenuCrear] = useState(false);
 
   const [mostrarMenuOpciones, setMostrarMenuOpciones] = useState(false);
@@ -101,38 +107,38 @@ export function Carpetas() {
 
   const editarCarpeta = async (id) => {
     try {
-        const carpetaEditada = await updateFolder(id, {name: nombreNuevo, color: colorNuevo});
-        await setCarpetas()
-        setNombreNuevo("");
-        setColorNuevo("");
-        setIdAEditar(null);
-        setIdAEliminar(null);
-        setMostrarMenuEditar(false)
-    }catch (e){
-        alert("Error al editar la carpeta")
+      const carpetaEditada = await updateFolder(id, {
+        name: nombreNuevo,
+        color: colorNuevo,
+      });
+      await setCarpetas();
+      setNombreNuevo("");
+      setColorNuevo("");
+      setIdAEditar(null);
+      setIdAEliminar(null);
+      setMostrarMenuEditar(false);
+    } catch (e) {
+      alert("Error al editar la carpeta");
     }
-  }
+  };
 
   const [idAEliminar, setIdAEliminar] = useState(null);
 
   const eliminarCarpeta = async (id) => {
     try {
-        const carpetaAEliminar = await deleteFolder(id);
-        await setCarpetas();
-        setIdAEliminar(null);
-
-    } catch(e){
-        alert("Error al eliminar la carpeta")
+      const carpetaAEliminar = await deleteFolder(id);
+      await setCarpetas();
+      setIdAEliminar(null);
+      onFolderDeleted?.();
+    } catch (e) {
+      alert("Error al eliminar la carpeta");
     }
-  }
+  };
 
   return (
     <>
-      <Animated.View style={{ flex: 1, opacity, overflow: "hidden" }}>
-        <View
-          className="flex-1 pb-3 bg-[#101010]"
-          style={{ overflow: "hidden" }}
-        >
+      <Animated.View style={{ flexShrink: 1, opacity, overflow: "hidden" }}>
+        <View className=" bg-[#101010]" style={{ overflow: "hidden" }}>
           <Pressable
             hitSlop={7}
             onPress={abrirModalCrear}
@@ -144,7 +150,8 @@ export function Carpetas() {
           <FlatList
             data={carpetas}
             keyExtractor={(carpeta) => String(carpeta.id)}
-            style={{ flex: 1 }}
+            style={{ flexShrink: 1 }}
+            contentContainerStyle={{ paddingBottom: 70 }}
             renderItem={({ item: carpetaItem }) => (
               <Link
                 asChild
@@ -167,10 +174,7 @@ export function Carpetas() {
                     <Carpeta className="me-3 ms-4" size={20} color={"white"} />
                     <Text
                       style={{
-                        color:
-                          carpetaItem.color == "black"
-                            ? "white"
-                            : "black",
+                        color: carpetaItem.color == "black" ? "white" : "black",
                       }}
                     >
                       {carpetaItem.name}
@@ -227,7 +231,15 @@ export function Carpetas() {
               >
                 <View className="flex-col">
                   <View className="m-4 flex-col">
-                    <Text className="text-white">
+                    <View className=" flex-row justify-end">
+                      <Pressable
+                        hitSlop={7}
+                        onPress={() => setMostrarMenuCrear(false)}
+                      >
+                        <Cancelar size={22} color={"white"} />
+                      </Pressable>
+                    </View>
+                    <Text className="text-white mt-3">
                       Escribe el nombre de la carpeta:
                     </Text>
                     <TextInput
@@ -306,7 +318,15 @@ export function Carpetas() {
               >
                 <View className="flex-col">
                   <View className="m-4 flex-col">
-                    <Text className="text-white">
+                    <View className=" flex-row justify-end items-start">
+                      <Pressable
+                        hitSlop={7}
+                        onPress={() => setMostrarMenuEditar(false)}
+                      >
+                        <Cancelar size={22} color={"white"} />
+                      </Pressable>
+                    </View>
+                    <Text className="text-white mt-3">
                       Escribe el nombre de la carpeta:
                     </Text>
                     <TextInput
@@ -387,7 +407,7 @@ export function Carpetas() {
                 setMostrarMenuEditar(true);
               }}
             >
-              <Escribir color={"white"} size={20} className="me-2" />
+              <EditarCarpeta color={"white"} size={20} className="me-2" />
               <Text className="text-white">Editar carpeta</Text>
             </Pressable>
             <Pressable

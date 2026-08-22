@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useNotesFromFolder, useNotesWithoutfolder } from "../hooks/useNotes";
 import { useState, useRef, useEffect } from "react";
-import { Anadir } from "./Icons";
+import { Anadir, Cancelar } from "./Icons";
 import { NotaMenu } from "./NotaMenu";
 import { coloresToolBar, coloresFondo } from "../data/utils";
 import { updateNote } from "../db/notesRepository";
@@ -130,42 +130,58 @@ export const ContenidoCarpeta = (props, index) => {
                 className="bg-[#2d2d2d] rounded-t-2xl"
                 onPress={(e) => e.stopPropagation()}
               >
-                <Text className="text-white text-base font-semibold mb-4">
-                  Selecciona las notas a añadir:
-                </Text>
-
-                <FlatList
-                  numColumns={1}
-                  data={notasSinCarpeta}
-                  keyExtractor={(nota) => String(nota.id)}
-                  renderItem={({ item }) => (
-                    <View
-                      className="flex-1 flex-row items-center justify-between p-3 m-1 rounded-lg"
-                      style={{
-                        backgroundColor:
-                          coloresFondo[item.colorTheme] || "#383838",
-                      }}
-                    >
-                      <Text
-                        className="text-white font-medium flex-1 me-2"
-                        numberOfLines={1}
+                <View className=" flex-row justify-between">
+                  <Text className="text-white text-lg font-semibold mb-4">
+                    Selecciona las notas a añadir:{" "}
+                  </Text>
+                  <Pressable
+                    hitSlop={7}
+                    onPress={() => setMostrarMenuAnadir(false)}
+                  >
+                    <Cancelar size={22} color={"white"} />
+                  </Pressable>
+                </View>
+                {notasSinCarpeta.length == 0 ? (
+                  <View className="justify-center items-center">
+                    <Text className="text-white mt-10 mb-10">
+                      No hay más notas que añadir en la carpeta
+                    </Text>
+                  </View>
+                ) : (
+                  <FlatList
+                    numColumns={1}
+                    data={notasSinCarpeta}
+                    style={{ flexShrink: 1 }}
+                    keyExtractor={(nota) => String(nota.id)}
+                    renderItem={({ item }) => (
+                      <View
+                        className="flex-row items-center justify-between p-3 m-1 rounded-lg"
                         style={{
-                          color: item.colorTheme == "black" ? "white" : "black",
+                          backgroundColor:
+                            coloresFondo[item.colorTheme] || "#383838",
                         }}
                       >
-                        {item.title.length > 0 ? item.title : "Sin Titulo"}
-                      </Text>
-                      <Pressable
-                        onPress={() => {
-                          setMostrarMenuAnadir(false);
-                          anadirNota(item.id);
-                        }}
-                      >
-                        <Anadir color={"white"} size={22} />
-                      </Pressable>
-                    </View>
-                  )}
-                />
+                        <Text
+                          className="text-white font-medium flex-1 me-2"
+                          numberOfLines={1}
+                          style={{
+                            color:
+                              item.colorTheme == "black" ? "white" : "black",
+                          }}
+                        >
+                          {item.title.length > 0 ? item.title : "Sin Titulo"}
+                        </Text>
+                        <Pressable
+                          onPress={() => {
+                            anadirNota(item.id);
+                          }}
+                        >
+                          <Anadir color={"white"} size={22} />
+                        </Pressable>
+                      </View>
+                    )}
+                  />
+                )}
               </Pressable>
             </View>
           </KeyboardAvoidingView>

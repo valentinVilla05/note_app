@@ -11,9 +11,11 @@ import { Screen } from "./Screen";
 import { createNote } from "../db/notesRepository";
 import { Carpetas } from "./Carpetas";
 import { BotonEscribir } from "./BotonEscribir";
+import { useState } from "react";
 
 export function Main() {
   const insets = useSafeAreaInsets();
+  const [refreshNotasKey, setRefreshNotasKey] = useState(0); 
 
   return (
     <SafeAreaProvider>
@@ -25,14 +27,16 @@ export function Main() {
             paddingBottom: insets.bottom,
           }}
         >
-          <View style={{ flex: 0.4, overflow: "hidden" }}>
-            <Carpetas />
+          <View style={{ maxHeight: "40%", flexShrink: 1, overflow: "hidden" }}>
+            <Carpetas
+              onFolderDeleted={() => setRefreshNotasKey((prev) => prev + 1)}
+            />
           </View>
-          <View style={{ flex: 0.6 }}>
-            <Notas />
+          <View style={{ flex: 1}}>
+            <Notas key={refreshNotasKey} />
           </View>
 
-          <BotonEscribir/>
+          <BotonEscribir />
         </View>
       </Screen>
     </SafeAreaProvider>
