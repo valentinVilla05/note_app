@@ -101,7 +101,6 @@ export const Editor = (props) => {
   const zoomIn = "aumentarZoom";
   const zoomOut = "disminuirZoom";
 
-
   const pickImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -151,10 +150,64 @@ export const Editor = (props) => {
     setMostrarMenu(true);
   };
 
+  const [opcionEditor, setOpcionEditor] = useState("basico");
+
   return (
     <>
       <SafeAreaProvider>
         <SafeAreaView className="flex-1">
+          <View
+            className="flex-row p-1  "
+            style={{
+              backgroundColor: coloresToolBar[colorTheme],
+            }}
+          >
+            <Pressable
+              onPress={() => setOpcionEditor("basico")}
+              className={`flex-1 py-3 rounded-lg items-center justify-center`}
+              style={{
+                backgroundColor:
+                  opcionEditor === "basico"
+                    ? coloresFondo[colorTheme]
+                    : coloresToolBar[colorTheme],
+              }}
+            >
+              <Text
+                className={`font-semibold`}
+                style={{
+                  color:
+                    opcionEditor == "basico" && colorTheme != "black"
+                      ? "black"
+                      : "white",
+                }}
+              >
+                Editor Básico
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => setOpcionEditor("avanzado")}
+              className={`flex-1 py-3 rounded-lg items-center justify-center`}
+              style={{
+                backgroundColor:
+                  opcionEditor === "avanzado"
+                    ? coloresFondo[colorTheme]
+                    : coloresToolBar[colorTheme],
+              }}
+            >
+              <Text
+                className={`font-semibold`}
+                style={{
+                  color:
+                    opcionEditor == "avanzado" && colorTheme != "black"
+                      ? "black"
+                      : "white",
+                }}
+              >
+                Editor Extendido
+              </Text>
+            </Pressable>
+          </View>
           <RichToolbar
             style={{
               backgroundColor: coloresToolBar[colorTheme] || "#181818",
@@ -170,18 +223,19 @@ export const Editor = (props) => {
               actions.setItalic,
               actions.insertBulletsList,
               actions.checkboxList,
-              actions.code,
               actions.undo,
               actions.redo,
               compartir,
+              accionOpciones,
             ]}
             iconMap={{
-              [actions.undo]: ({ tintColor }) => (
-                  <Deshacer color={tintColor} />
+              [accionOpciones]: ({ tintColor }) => (
+                <Pressable hitSlop={7} onPress={abrirMenu}>
+                  <Opciones color={tintColor} />
+                </Pressable>
               ),
-              [actions.redo]: ({ tintColor }) => (
-                  <Rehacer color={tintColor} />
-              ),
+              [actions.undo]: ({ tintColor }) => <Deshacer color={tintColor} />,
+              [actions.redo]: ({ tintColor }) => <Rehacer color={tintColor} />,
               [compartir]: ({ tintColor }) => (
                 <Pressable
                   hitSlop={7}
@@ -213,55 +267,54 @@ export const Editor = (props) => {
             }}
             iconSize={26}
           />
-          <RichToolbar
-            style={{
-              backgroundColor: coloresToolBar[colorTheme] || "#181818",
-              minHeight: 55,
-              paddingTop: 5,
-              paddingBottom: 5,
-              alignItems: "center",
-            }}
-            editor={richTextRef}
-            actions={[
-              actions.heading1,
-              actions.heading2,
-              actions.heading3,
-              actions.indent,
-              actions.alignLeft,
-              actions.alignCenter,
-              actions.alignRight,
-              actions.alignFull,
-              actions.insertImage,
-              accionOpciones,
-            ]}
-            onPressAddImage={pickImage}
-            iconMap={{
-              [accionOpciones]: ({ tintColor }) => (
-                <Pressable hitSlop={7} onPress={abrirMenu}>
-                  <Opciones color={tintColor} />
-                </Pressable>
-              ),
-              [actions.heading1]: ({ tintColor }) => (
-                <Encabezado1 color={tintColor} />
-              ),
-              [actions.heading2]: ({ tintColor }) => (
-                <Encabezado2 color={tintColor} />
-              ),
-              [actions.heading3]: ({ tintColor }) => (
-                <Encabezado3 color={tintColor} />
-              ),
-            }}
-            iconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
-            selectedIconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
-            selectedButtonStyle={{
-              backgroundColor:
-                colorTheme === "black"
-                  ? "rgba(255, 255, 255, 0.15)"
-                  : "rgba(0, 0, 0, 0.3)",
-              borderRadius: 8,
-            }}
-            iconSize={26}
-          />
+          {opcionEditor == "avanzado" ? (
+            <RichToolbar
+              style={{
+                backgroundColor: coloresToolBar[colorTheme] || "#181818",
+                minHeight: 55,
+                paddingTop: 5,
+                paddingBottom: 5,
+                alignItems: "center",
+              }}
+              editor={richTextRef}
+              actions={[
+                actions.heading1,
+                actions.heading2,
+                actions.heading3,
+                actions.indent,
+                actions.code,
+                actions.alignLeft,
+                actions.alignCenter,
+                actions.alignRight,
+                actions.alignFull,
+                actions.insertImage,
+              ]}
+              onPressAddImage={pickImage}
+              iconMap={{
+                [actions.heading1]: ({ tintColor }) => (
+                  <Encabezado1 color={tintColor} />
+                ),
+                [actions.heading2]: ({ tintColor }) => (
+                  <Encabezado2 color={tintColor} />
+                ),
+                [actions.heading3]: ({ tintColor }) => (
+                  <Encabezado3 color={tintColor} />
+                ),
+              }}
+              iconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
+              selectedIconTint={colorTheme === "black" ? "#ffffff" : "#000000"}
+              selectedButtonStyle={{
+                backgroundColor:
+                  colorTheme === "black"
+                    ? "rgba(255, 255, 255, 0.15)"
+                    : "rgba(0, 0, 0, 0.3)",
+                borderRadius: 8,
+              }}
+              iconSize={26}
+            />
+          ) : (
+            <></>
+          )}
 
           <ScrollView
             className="flex-1"
