@@ -192,7 +192,7 @@ export const EditarCarpeta = (props) => {
 export const SacarDeCarpetaIcon = (props) => {
   return (
     <MaterialCommunityIcons
-      name="folder-arrow-left-outline"
+      name="folder-arrow-up-outline"
       size={24}
       color="black"
       {...props}
