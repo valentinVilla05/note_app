@@ -27,7 +27,26 @@ export const Gestor = () => {
     getPasswords();
   }, []);
 
-  const guardarContrasena = async (key, value) => {
+  const guardarContrasena = async (keyInput, valueInput) => {
+    const key = keyInput ? keyInput.trim() : "";
+    const value = valueInput ? valueInput.trim() : "";
+
+    if (!key || !value) {
+      alert(
+        "El nombre de la aplicación y la contraseña no pueden estar vacíos",
+      );
+      return;
+    }
+
+    // Expresión regular con los caracteres permitidos por Expo SecureStore
+    const regexClaveValida = /^[a-zA-Z0-9_.-]+$/;
+    if (!regexClaveValida.test(key)) {
+      alert(
+        "El nombre solo puede contener letras, números, puntos (.), guiones (-) o guiones bajos (_), sin espacios.",
+      );
+      return;
+    }
+
     try {
       await SecureStore.setItemAsync(key, value);
 
@@ -43,10 +62,13 @@ export const Gestor = () => {
         );
       }
       setMenuCrear(false);
+      setApp("");
+      setPassword("");
 
       getPasswords();
     } catch (e) {
-      alert("Error al guardar la contraseñ");
+      console.error(e);
+      alert("Error al guardar la contraseña");
     }
   };
 
@@ -61,14 +83,39 @@ export const Gestor = () => {
 
       const listaConvertida = JSON.parse(lista);
       const contrasenasCompletas = [];
+      const listaKeysValidas = [];
+      const regexClaveValida = /^[a-zA-Z0-9_.-]+$/;
 
       for (const pass of listaConvertida) {
-        const valor = await SecureStore.getItemAsync(pass);
-        contrasenasCompletas.push({ app: pass, password: valor });
+        // Omite claves vacías, nulas o con formato no permitido por SecureStore
+        if (
+          typeof pass === "string" &&
+          pass.trim() !== "" &&
+          regexClaveValida.test(pass)
+        ) {
+          try {
+            const valor = await SecureStore.getItemAsync(pass);
+            if (valor !== null) {
+              contrasenasCompletas.push({ app: pass, password: valor });
+              listaKeysValidas.push(pass);
+            }
+          } catch (err) {
+            console.warn("Error al recuperar la clave:", pass, err);
+          }
+        }
+      }
+
+      // Si había entradas vacías o corruptas, sobreescribe el índice con la lista limpia
+      if (listaKeysValidas.length !== listaConvertida.length) {
+        await SecureStore.setItemAsync(
+          "indice_passwords",
+          JSON.stringify(listaKeysValidas),
+        );
       }
 
       setListaPasswords(contrasenasCompletas);
     } catch (e) {
+      console.error(e);
       alert("Error al cargar las contraseñas");
     }
   };
@@ -115,7 +162,7 @@ export const Gestor = () => {
       await SecureStore.setItemAsync(app, newPass);
       await getPasswords();
     } catch (e) {
-      alert("Error al actualiazr la contraseña");
+      alert("Error al actualizar la contraseña");
     }
   };
   return (
@@ -124,13 +171,16 @@ export const Gestor = () => {
         <Screen>
           <View className="flex-1 w-full flex-col items-center justify-center pt-5">
             <Text className="color-[#717171] text-center text-sm m-2">
-              Por seguridad, esta pantalla volverá a pedir autenticación cada 2
+              Por seguridad, esta pantalla volverá a pedir autenticación cada 4
               minutos. Cada vez que reveles una contraseña esta se ocultará
-              automáticamente a los 30 segundos.
+              automáticamente a los 30 segundos. Los nombres de la app solo
+              pueden contener letras números, . , - o _. (no puede contener
+              espacios u otros caracteres).
             </Text>
             {listaPasswords.length > 0 ? (
               <FlatList
                 numColumns={1}
+                contentContainerStyle={{ paddingBottom: 60 }}
                 data={listaPasswords}
                 keyExtractor={(item) => item.app}
                 renderItem={({ item }) => (
@@ -154,7 +204,7 @@ export const Gestor = () => {
             )}
             <Pressable
               onPress={() => setMenuCrear(true)}
-              className="absolute bottom-6 bg-[#e17f29] active:bg-[#cf701e] px-6 h-12 flex flex-row items-center justify-center rounded-full shadow-lg z-10"
+              className="bottom-8 bg-[#e17f29] active:bg-[#cf701e] px-6 h-12 flex flex-row items-center justify-center rounded-full shadow-lg z-10"
             >
               <Text className="text-white font-semibold text-base">
                 + Añadir contraseña
@@ -219,7 +269,7 @@ export const Gestor = () => {
                   </Text>
                   <TextInput
                     value={password}
-                    secureTextEntry={true}
+                    secureTextEntry={false}
                     placeholder="Tu contraseña secreta"
                     placeholderTextColor="#888"
                     className="bg-[#404040] text-white px-4 py-3 rounded-lg w-full"

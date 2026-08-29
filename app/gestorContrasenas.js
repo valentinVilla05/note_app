@@ -19,7 +19,7 @@ export default function gestorContrasenas() {
   const [autorizado, setAutorizado] = useState(false);
   const [cargando, setCargando] = useState(false);
 
-  const TIEMPO_EXPIRACION = 120000;
+  const TIEMPO_EXPIRACION = 240000;
   const appState = useRef(AppState.currentState);
 
   useEffect(() => {

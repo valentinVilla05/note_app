@@ -8,7 +8,6 @@ import {
   Modal,
   Animated,
 } from "react-native";
-import { Main } from "../components/Main";
 import {
   Ajustes,
   Archivado,
@@ -22,8 +21,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { Link } from "expo-router";
-import { coloresToolBar as colorHeader } from "../data/utils";
+import { Link, usePathname } from "expo-router";
 import { migrateFromAsyncStorage } from "../db/migrator";
 
 const anchoMenu = Dimensions.get("window").width * 0.6;
@@ -31,6 +29,7 @@ const anchoMenu = Dimensions.get("window").width * 0.6;
 export default function Layout() {
   const insets = useSafeAreaInsets();
   const [migracionLista, setMigracionLista] = useState(false);
+  const rutaActual = usePathname();
 
   useEffect(() => {
     migrateFromAsyncStorage().finally(() => setMigracionLista(true));
@@ -118,6 +117,9 @@ export default function Layout() {
               <Pressable
                 className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
                 onPress={() => setMostrarMenu(false)}
+                style={{
+                  backgroundColor: rutaActual == "/" ? "#3d3d3d" : "#181818",
+                }}
               >
                 <Notas color={"white"} size={22} className="me-3" />
                 <Text className="text-white text-xl ">Mis notas</Text>
@@ -132,6 +134,10 @@ export default function Layout() {
               <Pressable
                 className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
                 onPress={() => setMostrarMenu(false)}
+                style={{
+                  backgroundColor:
+                    rutaActual == "/archivo" ? "#3d3d3d" : "#181818",
+                }}
               >
                 <Archivado color={"white"} size={22} className="me-3" />
                 <Text className="text-white text-xl ">Notas archivadas</Text>
@@ -146,6 +152,10 @@ export default function Layout() {
               <Pressable
                 className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
                 onPress={() => setMostrarMenu(false)}
+                style={{
+                  backgroundColor:
+                    rutaActual == "/privado" ? "#3d3d3d" : "#181818",
+                }}
               >
                 <Ocultar color={"white"} size={22} className="me-3" />
                 <Text className="text-white text-xl ">Notas Privadas</Text>
@@ -161,7 +171,11 @@ export default function Layout() {
                 onPress={() => {
                   setMostrarMenu(false);
                 }}
-                className="active:rounded-md active:bg-[#3d3d3d]"
+                className="rounded-md active:bg-[#3d3d3d]"
+                style={{
+                  backgroundColor:
+                    rutaActual == "/gestorContrasenas" ? "#3d3d3d" : "#181818",
+                }}
               >
                 <View className="p-4 rounded-md flex-row items-center">
                   <Contrasena color={"white"} size={22} className="me-3" />
