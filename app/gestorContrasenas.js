@@ -1,19 +1,55 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "expo-router";
 import { Privadas } from "../components/Privadas";
 import * as LocalAuthentication from "expo-local-authentication";
-import { Pressable, View, Text, ActivityIndicator } from "react-native";
+import {
+  Pressable,
+  View,
+  Text,
+  ActivityIndicator,
+  AppState,
+} from "react-native";
 import { Gestor } from "../components/Gestor";
+import { usePreventScreenCapture } from "expo-screen-capture";
+import * as Portapapeles from "expo-clipboard";
 
 export default function gestorContrasenas() {
+  usePreventScreenCapture();
+
   const [autorizado, setAutorizado] = useState(false);
   const [cargando, setCargando] = useState(false);
 
+  const TIEMPO_EXPIRACION = 120000;
+  const appState = useRef(AppState.currentState);
+
   useEffect(() => {
-    const iniciar = async () => {
-      await pedirAutenticacion();
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current === "active" &&
+        nextAppState.match(/inactive|background/)
+      ) {
+        limpiarPortapapeles();
+        setAutorizado(false);
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
     };
-  });
+  }, []);
+
+  useEffect(() => {
+    let timer;
+    if (autorizado) {
+      timer = setTimeout(() => {
+        limpiarPortapapeles();
+        setAutorizado(false);
+        pedirAutenticacion();
+      }, TIEMPO_EXPIRACION);
+    }
+    return () => clearTimeout(timer);
+  }, [autorizado]);
 
   const pedirAutenticacion = async () => {
     setCargando(true);
@@ -56,6 +92,10 @@ export default function gestorContrasenas() {
     } finally {
       setCargando(false);
     }
+  };
+
+  const limpiarPortapapeles = async () => {
+    await Portapapeles.setStringAsync("");
   };
 
   return (

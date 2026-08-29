@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
 import { Mostrar, Ocultar, Opciones, PapeleraIcon } from "./Icons";
 export const PassCards = (props) => {
   const [mostrar, setMostrar] = useState(false);
-
   const { app, pass, onDeletePassword, onActualizarContrasena } = props;
-
   const [contrasena, setNuevaContrasena] = useState(pass);
+
+  useEffect(() => {
+    let timer;
+    if (mostrar) {
+      timer = setTimeout(() => {
+        setMostrar(false);
+      }, 30000);
+    }
+    return () => clearTimeout(timer);
+  }, [mostrar]);
 
   const guardarCambio = () => {
     if (contrasena !== pass && onActualizarContrasena) {
@@ -30,11 +38,7 @@ export const PassCards = (props) => {
         ) : (
           <Text className="text-white">{!pass ? "" : "****"}</Text>
         )}
-        <Pressable
-          onPress={() => {
-            setMostrar(!mostrar);
-          }}
-        >
+        <Pressable onPress={() => setMostrar(!mostrar)}>
           {mostrar == false ? (
             <Mostrar color={"white"} />
           ) : (

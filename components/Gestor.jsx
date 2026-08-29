@@ -123,6 +123,11 @@ export const Gestor = () => {
       <SafeAreaProvider>
         <Screen>
           <View className="flex-1 w-full flex-col items-center justify-center pt-5">
+            <Text className="color-[#717171] text-center text-sm m-2">
+              Por seguridad, esta pantalla volverá a pedir autenticación cada 2
+              minutos. Cada vez que reveles una contraseña esta se ocultará
+              automáticamente a los 30 segundos.
+            </Text>
             {listaPasswords.length > 0 ? (
               <FlatList
                 numColumns={1}
