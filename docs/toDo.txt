@@ -1,20 +1,12 @@
-* Seleccionar varias notas
 
 * Gestor de contraseñas
 
 
 * Picker -> Ventana de seleccion
 
-* Personalizacion
 
 Futuro: 
  * App en web con React + Supabase
-
-
-Manejo de datos:
- * Expo SecureStore -> Gestor de contraseñas
- * Expo Filesystem -> Gestor de imagenes, audios u archivos
- * Async Storage -> Gestor de las notas
 
 
 --------- Instalacion -------------

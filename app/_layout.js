@@ -60,7 +60,14 @@ export default function Layout() {
 
   if (!migracionLista) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#181818" }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#181818",
+        }}
+      >
         <StatusBar style="light" />
       </View>
     );
@@ -126,11 +133,7 @@ export default function Layout() {
                 className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
                 onPress={() => setMostrarMenu(false)}
               >
-                <Archivado
-                  color={"white"}
-                  size={22}
-                  className="me-3"
-                />
+                <Archivado color={"white"} size={22} className="me-3" />
                 <Text className="text-white text-xl ">Notas archivadas</Text>
               </Pressable>
             </Link>
@@ -144,28 +147,30 @@ export default function Layout() {
                 className="p-4 rounded-md flex-row items-center active:bg-[#3d3d3d]"
                 onPress={() => setMostrarMenu(false)}
               >
-                <Ocultar
-                  color={"white"}
-                  size={22}
-                  className="me-3"
-                />
+                <Ocultar color={"white"} size={22} className="me-3" />
                 <Text className="text-white text-xl ">Notas Privadas</Text>
               </Pressable>
             </Link>
-            <Pressable
-              onPress={() => {
-                alert("Proximamente");
-                setMostrarMenu(false);
+            <Link
+              href={{
+                pathname: "gestorContrasenas",
               }}
-              className="active:rounded-md active:bg-[#3d3d3d]"
+              asChild
             >
-              <View className="p-4 rounded-md flex-row items-center">
-                <Contrasena color={"white"} size={22} className="me-3" />
-                <Text className="text-white text-xl ">
-                  Gestor de contraseñas
-                </Text>
-              </View>
-            </Pressable>
+              <Pressable
+                onPress={() => {
+                  setMostrarMenu(false);
+                }}
+                className="active:rounded-md active:bg-[#3d3d3d]"
+              >
+                <View className="p-4 rounded-md flex-row items-center">
+                  <Contrasena color={"white"} size={22} className="me-3" />
+                  <Text className="text-white text-xl ">
+                    Gestor de contraseñas
+                  </Text>
+                </View>
+              </Pressable>
+            </Link>
             <Pressable
               onPress={() => {
                 alert("Proximamente");

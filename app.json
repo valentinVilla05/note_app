@@ -2,7 +2,7 @@
   "expo": {
     "name": "Notas",
     "slug": "notas",
-    "version": "3.0.0",
+    "version": "3.2.0",
     "orientation": "portrait",
     "icon": "./assets/icono.png",
     "userInterfaceStyle": "light",
@@ -27,7 +27,8 @@
       "expo-router",
       "expo-sqlite",
       "expo-sharing",
-      "expo-audio"
+      "expo-audio",
+      "expo-secure-store"
     ]
   }
 }
