@@ -30,6 +30,18 @@ function mapRowFolder(row) {
   };
 }
 
+function mapRowReminder(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    date: row.date,
+    repeat: row.repeat,
+    completed: row.completed,
+    createdAt: row.created_at,
+    notificationId: row.notification_id,
+  };
+}
+
 const camposNota = {
   id: "id",
   title: "title",
@@ -53,6 +65,16 @@ const camposFolder = {
   updatedAt: "updated_at",
 };
 
+const camposReminders = {
+  id: "id",
+  name: "name",
+  date: "date",
+  repeat: "repeat",
+  completed: "completed",
+  createdAt: "created_at",
+  notificationId: "notification_id",
+};
+
 const camposBooleanos = new Set(["pinned", "favourite", "archived", "hidden"]);
 
 // Solo convierte las keys presentes en el input.
@@ -73,6 +95,17 @@ export function toDbFolder(folder) {
     const dbKey = camposFolder[key];
     if (!dbKey) continue;
     result[dbKey] = folder[key];
+  }
+  return result;
+}
+
+export function toDbReminder(reminder) {
+  const result = {};
+  for (const key of Object.keys(reminder)) {
+    const dbKey = camposReminders[key];
+    if (!dbKey) continue;
+    const value = reminder[key];
+    result[dbKey] = key === "completed" ? (value ? 1 : 0) : value;
   }
   return result;
 }
@@ -270,7 +303,7 @@ export async function getNotesWhitoutFolder() {
 
   const notesConverted = notes.map(mapRowNote);
 
-  return notesConverted
+  return notesConverted;
 }
 
 export async function updateFolder(id, campos) {
@@ -299,4 +332,71 @@ export async function deleteFolder(id) {
   await db.runAsync(sql, id);
 
   return;
+}
+
+export async function getAllReminders() {
+  const db = await getDatabase();
+
+  const rows = await db.getAllAsync(
+    `SELECT * FROM reminders ORDER BY date ASC`,
+  );
+  return rows ? rows.map(mapRowReminder) : [];
+}
+
+export async function getReminderById(reminderId) {
+  const db = await getDatabase();
+
+  const sql = `SELECT * FROM reminders WHERE id = ?`;
+  const result = await db.getFirstAsync(sql, [reminderId]);
+
+  return result ? mapRowReminder(result) : null;
+}
+
+export async function createReminder(reminder) {
+  const db = await getDatabase();
+  const id = idGenerator();
+
+  const newReminder = {
+    id: id,
+    name: reminder.name || "",
+    date: reminder.date,
+    repeat: reminder.repeat || 0,
+    completed: reminder.completed || false,
+    createdAt: Date.now(),
+    notificationId: reminder.notificationId || null,
+  };
+
+  const dbReminder = toDbReminder(newReminder);
+  const columnas = Object.keys(dbReminder);
+  const placeholders = columnas.map(() => "?").join(", ");
+  const sql = `INSERT INTO reminders (${columnas.join(", ")}) VALUES (${placeholders})`;
+
+  await db.runAsync(sql, Object.values(dbReminder));
+  return newReminder;
+}
+
+export async function updateReminder(reminderId, campos) {
+  const db = await getDatabase();
+  const camposValidos = { ...campos };
+  delete camposValidos.id;
+  delete camposValidos.createdAt;
+
+  const dbCampos = toDbReminder(camposValidos);
+  const columnas = Object.keys(dbCampos);
+  const valores = Object.values(dbCampos);
+
+  if (columnas.length === 0) return getReminderById(reminderId);
+
+  const columnasSentencia = columnas.map((col) => `${col} = ?`).join(", ");
+
+  const sql = `UPDATE reminders SET ${columnasSentencia} WHERE id = ?`;
+  await db.runAsync(sql, [...valores, reminderId]);
+
+  return getReminderById(reminderId);
+}
+
+export async function deleteReminder(reminderId) {
+  const db = await getDatabase();
+  const sql = `DELETE FROM reminders WHERE id = ?`;
+  await db.runAsync(sql, [reminderId]);
 }

@@ -15,6 +15,7 @@ import {
   Contrasena,
   Menu,
   Notas,
+  Recordarorio,
 } from "../components/Icons";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -185,18 +186,28 @@ export default function Layout() {
                 </View>
               </Pressable>
             </Link>
-            <Pressable
-              onPress={() => {
-                alert("Proximamente");
-                setMostrarMenu(false);
+            <Link
+              href={{
+                pathname: "recordatorios",
               }}
-              className="active:rounded-md active:bg-[#3d3d3d]"
+              asChild
             >
-              <View className="p-4 rounded-md flex-row items-center ">
-                <Ajustes color={"white"} size={22} className="me-3" />
-                <Text className="text-white text-xl ">Ajustes</Text>
-              </View>
-            </Pressable>
+              <Pressable
+                onPress={() => {
+                  setMostrarMenu(false);
+                }}
+                className="rounded-md active:bg-[#3d3d3d]"
+                style={{
+                  backgroundColor:
+                    rutaActual == "/recordatorios" ? "#3d3d3d" : "#181818",
+                }}
+              >
+                <View className="p-4 rounded-md flex-row items-center">
+                  <Recordarorio color={"white"} size={22} className="me-3" />
+                  <Text className="text-white text-xl ">Recordatorios</Text>
+                </View>
+              </Pressable>
+            </Link>
           </Animated.View>
           <Pressable className="flex-1 bg-transparent" onPress={cerrarMenu} />
         </View>

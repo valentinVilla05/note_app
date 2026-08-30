@@ -3,6 +3,7 @@ import { useFocusEffect } from "expo-router";
 import {
   deleteOldDeleted,
   getActiveNotes,
+  getAllReminders,
   getArchivedNotes,
   getDeletedNotes,
   getFolders,
@@ -36,14 +37,14 @@ export function useArchivedNotes() {
   return [listaArchivadas, cargarArchivadas];
 }
 
-export function useHiddenNotes () {
+export function useHiddenNotes() {
   const [listaOcultas, setListaOcultas] = useState([]);
 
   const cargarOcultas = useCallback(() => {
     getHiddenNotes().then(setListaOcultas);
   }, []);
 
-  useFocusEffect(cargarOcultas)
+  useFocusEffect(cargarOcultas);
 
   return [listaOcultas, cargarOcultas];
 }
@@ -83,7 +84,7 @@ export function useFolders() {
 
   useFocusEffect(cargarCarpetas);
 
-  return [carpetas, cargarCarpetas]
+  return [carpetas, cargarCarpetas];
 }
 
 export function useNotesFromFolder(id) {
@@ -101,11 +102,23 @@ export function useNotesFromFolder(id) {
 export function useNotesWithoutfolder() {
   const [notasLibres, setNotasLibres] = useState([]);
 
-  const cargarNotasSinFolder = useCallback(() =>  {
+  const cargarNotasSinFolder = useCallback(() => {
     getNotesWhitoutFolder().then(setNotasLibres);
   }, []);
 
   useFocusEffect(cargarNotasSinFolder);
 
   return [notasLibres, cargarNotasSinFolder];
+}
+
+export function useReminders() {
+  const [reminders, setReminders] = useState([]);
+
+  const cargarRecordatorios = useCallback(() => {
+    getAllReminders().then(setReminders);
+  }, []);
+
+  useFocusEffect(cargarRecordatorios);
+
+  return [reminders, cargarRecordatorios];
 }

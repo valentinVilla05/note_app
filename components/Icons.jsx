@@ -210,3 +210,7 @@ export const MeterEnCarpetaIcon = (props) => {
     />
   );
 };
+
+export const Recordarorio = (props) => {
+  return <AntDesign name="bell" size={24} color="black" {...props} />;
+};

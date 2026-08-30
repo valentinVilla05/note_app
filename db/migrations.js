@@ -17,7 +17,7 @@ const MIGRATIONS = [
           created_at INTEGER NOT NULL,
           updated_at INTEGER NOT NULL,
           deleted_at INTEGER
-        )
+        );
         
         CREATE TABLE IF NOT EXISTS folders (
           id TEXT PRIMARY KEY NOT NULL,
@@ -27,10 +27,18 @@ const MIGRATIONS = [
           updated_at INTEGER NOT NULL
         );
 
+        CREATE TABLE IF NOT EXISTS reminders (
+          id TEXT PRIMARY KEY NOT NULL,
+          name TEXT NOT NULL DEFAULT '',
+          date INTEGER NOT NULL,
+          repeat INTEGER NOT NULL DEFAULT 0,
+          completed INTEGER NOT NULL DEFAULT 0,
+          created_at INTEGER NOT NULL,
+          notification_id TEXT
+        );
+
         CREATE INDEX IF NOT EXISTS idx_notes_active ON notes(deleted_at, archived, pinned DESC, updated_at DESC);
-
         CREATE INDEX IF NOT EXISTS idx_notes_archived ON notes(deleted_at, archived);
-
         CREATE INDEX IF NOT EXISTS idx_notes_deleted ON notes (deleted_at);
       `);
     },
@@ -62,9 +70,7 @@ const MIGRATIONS = [
       const cols = await db.getAllAsync(`PRAGMA table_info(notes)`);
       const yaTieneFolderId = cols.some((c) => c.name === "folder_id");
       if (!yaTieneFolderId) {
-        await db.execAsync(
-          `ALTER TABLE notes ADD COLUMN folder_id TEXT;`,
-        );
+        await db.execAsync(`ALTER TABLE notes ADD COLUMN folder_id TEXT;`);
       }
     },
   },
@@ -96,19 +102,40 @@ const MIGRATIONS = [
       }
     },
   },
+  {
+    version: 5,
+    up: async (db) => {
+      const tablas = await db.getAllAsync(
+        `SELECT name FROM sqlite_master WHERE type='table' AND name='reminders'`,
+      );
+      if (tablas.length === 0) {
+        await db.execAsync(`
+          CREATE TABLE reminders (
+            id TEXT PRIMARY KEY NOT NULL,
+            name TEXT NOT NULL DEFAULT '',
+            date INTEGER NOT NULL,
+            repeat INTEGER NOT NULL DEFAULT 0,
+            completed INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL,
+            notification_id TEXT
+          );
+        `);
+      }
+    },
+  },
 ];
 
 export async function runMigrations() {
-  const db = await getDatabase(); // Conseguimos la base de datos
+  const db = await getDatabase();
   const result = await db.getFirstAsync("PRAGMA user_version");
-  const currentVersion = result?.user_version ?? 0; // Comprobamos la version actual
+  const currentVersion = result?.user_version ?? 0;
 
-  for (const migration of MIGRATIONS) { // Recorremos las migraciones
-    if(migration.version > currentVersion) {
-      await db.withTransactionAsync(async () => { // Nos aseguramos que la migracion se aplique bien entera o no se aplique nada
+  for (const migration of MIGRATIONS) {
+    if (migration.version > currentVersion) {
+      await db.withTransactionAsync(async () => {
         await migration.up(db);
-        await db.execAsync(`PRAGMA user_version = ${migration.version}`); // Actualiza la versión
-      })
+        await db.execAsync(`PRAGMA user_version = ${migration.version}`);
+      });
     }
   }
 }
