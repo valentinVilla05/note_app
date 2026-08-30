@@ -354,7 +354,6 @@ export const Editor = (props) => {
                     setAlineacionActual(actions.alignFull);
                   else setAlineacionActual(actions.alignLeft);
                 }}
-                placeholder="Comienza a escribir aquí..."
                 editorStyle={{
                   backgroundColor: coloresFondo[colorTheme] || "#181818",
                   color: colorTheme === "black" ? "#FFFFFF" : "#000000",

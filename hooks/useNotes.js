@@ -113,12 +113,9 @@ export function useNotesWithoutfolder() {
 
 export function useReminders() {
   const [reminders, setReminders] = useState([]);
-
   const cargarRecordatorios = useCallback(() => {
     getAllReminders().then(setReminders);
   }, []);
-
   useFocusEffect(cargarRecordatorios);
-
   return [reminders, cargarRecordatorios];
 }

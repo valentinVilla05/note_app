@@ -63,12 +63,12 @@ export const ContenidoCarpeta = (props, index) => {
   const moverNotas = async (listaNotas, folderId) => {
     try {
       for (const nota of notasSeleccionadas) {
-        await updateNote(nota, {folderId: folderId})
+        await updateNote(nota, { folderId: folderId });
 
         setNotasSeleccionadas([]);
         setNotasCarpeta();
 
-        setMostrarListaCarpetas(false)
+        setMostrarListaCarpetas(false);
       }
     } catch (e) {
       alert("Error al mover las notas");
@@ -256,7 +256,7 @@ export const ContenidoCarpeta = (props, index) => {
               >
                 <View className=" flex-row justify-between">
                   <Text className="text-white text-lg font-semibold mb-4">
-                    Selecciona las notas a añadir:{" "}
+                    Selecciona las notas a añadir:
                   </Text>
                   <Pressable
                     hitSlop={7}

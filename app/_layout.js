@@ -188,7 +188,7 @@ export default function Layout() {
             </Link>
             <Link
               href={{
-                pathname: "recordatorios",
+                pathname: "recordatoriosVista",
               }}
               asChild
             >
@@ -199,7 +199,7 @@ export default function Layout() {
                 className="rounded-md active:bg-[#3d3d3d]"
                 style={{
                   backgroundColor:
-                    rutaActual == "/recordatorios" ? "#3d3d3d" : "#181818",
+                    rutaActual == "/recordatoriosVista" ? "#3d3d3d" : "#181818",
                 }}
               >
                 <View className="p-4 rounded-md flex-row items-center">
